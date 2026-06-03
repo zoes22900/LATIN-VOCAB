@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latin Vocab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf8f4;
+      --surface: #ffffff;
+      --border: #e8e4dc;
+      --text: #1a1814;
+      --muted: #7a7568;
+      --accent: #3d2f1e;
+      --correct-bg: #edf7ed;
+      --correct-text: #1e5c1e;
+      --correct-border: #b6ddb6;
+      --wrong-bg: #fdf0f0;
+      --wrong-text: #8b1a1a;
+      --wrong-border: #f0b8b8;
+      --hint-bg: #f0f4ff;
+      --hint-text: #1a3080;
+      --hint-border: #b8c8f0;
+      --warning-bg: #fffbeb;
+      --warning-text: #7a4f00;
+      --warning-border: #f0d890;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-family: 'Lora', serif;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: var(--accent);
+    }
+
+    header p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .progress-wrap {
+      background: var(--border);
+      border-radius: 99px;
+      height: 3px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .streak-badge {
+      display: none;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 99px;
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease;
+    }
+
+    .latin-word {
+      font-family: 'Lora', serif;
+      font-size: 40px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .word-type {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    input[type="text"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 11px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:hover { background: var(--bg); }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary {
+      flex: 1;
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover { background: #2a1f10; }
+
+    .feedback {
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      margin-top: 1rem;
+      display: none;
+      line-height: 1.5;
+    }
+
+    .feedback-correct {
+      background: var(--correct-bg);
+      color: var(--correct-text);
+      border: 1px solid var(--correct-border);
+    }
+
+    .feedback-wrong {
+      background: var(--wrong-bg);
+      color: var(--wrong-text);
+      border: 1px solid var(--wrong-border);
+    }
+
+    .feedback-hint {
+      background: var(--hint-bg);
+      color: var(--hint-text);
+      border: 1px solid var(--hint-border);
+    }
+
+    .hint-loading { font-style: italic; opacity: 0.7; }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .latin-word { font-size: 32px; }
+      header h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Latin Vocab</h1>
+    <p>Type the English meaning — press Enter to check</p>
+  </header>
+
+  <div class="container">
+
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num" id="stat-score">0</span><span class="stat-label">correct</span></div>
+      <div class="stat"><span class="stat-num" id="stat-streak">0</span><span class="stat-label">streak</span></div>
+      <div class="stat"><span class="stat-num" id="stat-total">0</span><span class="stat-label">attempted</span></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="streak-badge" id="streak-badge">🔥 <span id="streak-text">3</span> in a row!</div>
+
+    <div class="card" id="card">
+      <p class="latin-word" id="latin-word">—</p>
+      <p class="word-type" id="word-type">loading…</p>
+    </div>
+
+    <input type="text" id="answer-input" placeholder="Type the English meaning…" autocomplete="off" spellcheck="false" />
+
+    <div class="btn-row">
+      <button id="hint-btn">hint</button>
+      <button class="btn-primary" id="check-btn">check answer →</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+  </div>
+
+  <footer>
+    Built with the Anthropic API &mdash; an open-source passion project
+  </footer>
+
+  <script>
+    // ─── WORD LIST ────────────────────────────────────────────────────────────
+    // Add more words here! Each entry needs:
+    //   latin:   the Latin word
+    //   type:    grammatical type (shown under the word)
+    //   english: array of accepted answers (first one is shown as the "correct" answer)
+    //   hint:    fallback hint if the AI is unavailable
+    const words = [
+      { latin: "amare",   type: "verb",        english: ["to love","love"],             hint: "Romans wrote this on pottery for their sweethearts." },
+      { latin: "aqua",    type: "noun (f.)",    english: ["water"],                     hint: "You drink this at a restaurant — same word in many languages." },
+      { latin: "bonus",   type: "adjective",   english: ["good"],                      hint: "Used in English 'bonus' — something extra and good." },
+      { latin: "canis",   type: "noun (m./f.)",english: ["dog"],                       hint: "Canine comes from this word." },
+      { latin: "dies",    type: "noun (m.)",   english: ["day"],                       hint: "Diary, diurnal — things related to the day." },
+      { latin: "esse",    type: "verb",        english: ["to be","be"],                hint: "The most basic Latin verb." },
+      { latin: "femina",  type: "noun (f.)",   english: ["woman"],                     hint: "Feminine comes from this root." },
+      { latin: "filius",  type: "noun (m.)",   english: ["son"],                       hint: "Filial — relating to a son or daughter." },
+      { latin: "habere",  type: "verb",        english: ["to have","have"],            hint: "Habitual — something you have regularly." },
+      { latin: "ignis",   type: "noun (m.)",   english: ["fire"],                      hint: "Ignite — to set something on fire." },
+      { latin: "ira",     type: "noun (f.)",   english: ["anger","wrath"],             hint: "Irate — being very angry." },
+      { latin: "locus",   type: "noun (m.)",   english: ["place","location"],          hint: "Local, location — all about place." },
+      { latin: "magnus",  type: "adjective",   english: ["great","large","big"],       hint: "Magnitude, magnify — making things bigger." },
+      { latin: "mater",   type: "noun (f.)",   english: ["mother"],                    hint: "Maternal — relating to mothers." },
+      { latin: "nauta",   type: "noun (m.)",   english: ["sailor"],                    hint: "Nautical — related to sailing and the sea." },
+      { latin: "nomen",   type: "noun (n.)",   english: ["name"],                      hint: "Nominate, nomenclature — giving names to things." },
+      { latin: "oculus",  type: "noun (m.)",   english: ["eye"],                       hint: "Ocular, oculist — relating to the eyes." },
+      { latin: "pater",   type: "noun (m.)",   english: ["father"],                    hint: "Paternal, paternity — relating to fathers." },
+      { latin: "puella",  type: "noun (f.)",   english: ["girl"],                      hint: "One of the most common nouns in beginners' Latin." },
+      { latin: "puer",    type: "noun (m.)",   english: ["boy","child"],               hint: "Puerile — childish behaviour." },
+      { latin: "regina",  type: "noun (f.)",   english: ["queen"],                     hint: "Regal — fit for a queen or king." },
+      { latin: "rex",     type: "noun (m.)",   english: ["king"],                      hint: "Regal, regent — royalty words come from this." },
+      { latin: "silva",   type: "noun (f.)",   english: ["forest","wood","woods"],     hint: "Sylvan — of or relating to a forest." },
+      { latin: "terra",   type: "noun (f.)",   english: ["land","earth","ground"],     hint: "Territory, terrain — all about land." },
+      { latin: "via",     type: "noun (f.)",   english: ["road","street","way","path"],hint: "Via (in English) means 'by way of'." },
+      { latin: "videre",  type: "verb",        english: ["to see","see"],              hint: "Video — literally 'I see' in Latin." },
+      { latin: "vir",     type: "noun (m.)",   english: ["man"],                       hint: "Virile — masculine strength, from this word." },
+      { latin: "vita",    type: "noun (f.)",   english: ["life"],                      hint: "Vital, vitality — essential to life." },
+      { latin: "vocare",  type: "verb",        english: ["to call","call"],            hint: "Vocabulary, vocation — a calling." },
+      { latin: "pax",     type: "noun (f.)",   english: ["peace"],                     hint: "Pacific — peaceful." },
+    ];
+
+    // ─── STATE ────────────────────────────────────────────────────────────────
+    let deck = [...words];
+    let current = null;
+    let score = 0;
+    let streak = 0;
+    let attempted = 0;
+    let answered = false;
+    let deckIndex = 0;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    shuffle(deck);
+
+    // ─── UI HELPERS ───────────────────────────────────────────────────────────
+    function updateStats() {
+      document.getElementById('stat-score').textContent  = score;
+      document.getElementById('stat-streak').textContent = streak;
+      document.getElementById('stat-total').textContent  = attempted;
+      const badge = document.getElementById('streak-badge');
+      if (streak >= 3) {
+        badge.style.display = 'block';
+        document.getElementById('streak-text').textContent = streak;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function nextCard() {
+      answered = false;
+      document.getElementById('answer-input').value    = '';
+      document.getElementById('answer-input').disabled = false;
+      document.getElementById('feedback').style.display = 'none';
+      document.getElementById('check-btn').textContent  = 'check answer →';
+
+      if (deckIndex >= deck.length) {
+        deckIndex = 0;
+        shuffle(deck);
+      }
+
+      current = deck[deckIndex++];
+      document.getElementById('latin-word').textContent = current.latin;
+      document.getElementById('word-type').textContent  = current.type;
+
+      const prog = Math.round((deckIndex / deck.length) * 100);
+      document.getElementById('progress-bar').style.width = prog + '%';
+      document.getElementById('answer-input').focus();
+    }
+
+    // ─── CHECK ANSWER ─────────────────────────────────────────────────────────
+    function checkAnswer() {
+      if (answered) { nextCard(); return; }
+
+      const raw = document.getElementById('answer-input').value.trim().toLowerCase();
+      if (!raw) return;
+
+      answered = true;
+      attempted++;
+
+      const normalise = s => s.toLowerCase().replace(/^to /, '').trim();
+      const correct = current.english.some(e => normalise(raw) === normalise(e));
+
+      const fb = document.getElementById('feedback');
+      fb.style.display = 'block';
+
+      if (correct) {
+        score++;
+        streak++;
+        fb.className = 'feedback feedback-correct';
+        fb.textContent = '✓ Correct! ' + current.latin + ' = ' + current.english[0];
+      } else {
+        streak = 0;
+        fb.className = 'feedback feedback-wrong';
+        fb.textContent = '✗ Not quite. The answer is: ' + current.english.join(' / ');
+      }
+
+      document.getElementById('check-btn').textContent  = 'next word →';
+      document.getElementById('answer-input').disabled  = true;
+      updateStats();
+    }
+
+    // ─── AI HINT ──────────────────────────────────────────────────────────────
+    // This calls the Anthropic API to get a smart, personalised hint.
+    // NOTE: For a production website, you should move this to a backend server
+    // so your API key is never exposed in the browser. For a school project
+    // running locally this is fine.
+    async function getHint() {
+      if (answered) return;
+
+      const fb = document.getElementById('feedback');
+      fb.style.display = 'block';
+      fb.className = 'feedback feedback-hint';
+      fb.innerHTML = '<span class="hint-loading">Getting a hint…</span>';
+      document.getElementById('hint-btn').disabled = true;
+
+      try {
+        const res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            system: "You are a friendly Latin tutor for high school students. Give a short hint (1–2 sentences) to help the student guess the meaning of a Latin word. Mention a related English word if you can. Never say the answer directly.",
+            messages: [{
+              role: "user",
+              content: `Give me a hint for the Latin word "${current.latin}" (${current.type}). The answer is "${current.english[0]}" but don't reveal it.`
+            }]
+          })
+        });
+
+        const data = await res.json();
+        const text = data.content?.map(b => b.text || '').join('') || current.hint;
+        fb.textContent = '💡 ' + text;
+      } catch (err) {
+        // Fallback to the built-in hint if the API call fails
+        fb.textContent = '💡 ' + current.hint;
+      }
+
+      document.getElementById('hint-btn').disabled = false;
+    }
+
+    // ─── EVENT LISTENERS ──────────────────────────────────────────────────────
+    document.getElementById('check-btn').addEventListener('click', checkAnswer);
+    document.getElementById('hint-btn').addEventListener('click', getHint);
+    document.getElementById('answer-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
+    // ─── START ────────────────────────────────────────────────────────────────
+    nextCard();
+    updateStats();
+  </script>
+
+</body>
+</html>
