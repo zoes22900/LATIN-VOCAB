@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "latin-vocab",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["/private/tmp/claude-501/-Users-zoesun-Documents-PP-LATIN-VOCAB/d140e487-ade3-4377-b8e5-c181b8a9e208/scratchpad/serve.py"],
+      "port": 4173
+    }
+  ]
+}
