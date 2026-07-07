@@ -15,7 +15,6 @@
       --surface2: #f3f0ea;
       --correct-bg:#edf7ed;--correct-text:#1e5c1e;--correct-border:#b6ddb6;
       --wrong-bg:#fdf0f0;--wrong-text:#8b1a1a;--wrong-border:#f0b8b8;
-      --hint-bg:#f0f4ff;--hint-text:#1a3080;--hint-border:#b8c8f0;
       --danger-text:#8b1a1a;--danger-border:#f0b8b8;--danger-bg:#fdf0f0;
       --warn-text:#7a4f00;
     }
@@ -103,7 +102,6 @@
     .feedback { border-radius:10px; padding:12px 14px; font-size:13px; margin-top:12px; display:none; line-height:1.5; }
     .fb-ok  { background:var(--correct-bg); color:var(--correct-text); border:1px solid var(--correct-border); }
     .fb-no  { background:var(--wrong-bg);   color:var(--wrong-text);   border:1px solid var(--wrong-border); }
-    .fb-hint{ background:var(--hint-bg);    color:var(--hint-text);    border:1px solid var(--hint-border); }
 
     /* ── empty state ── */
     .empty { text-align:center; padding:2.5rem 1rem; color:var(--muted); font-size:14px; }
@@ -212,10 +210,7 @@
       <p class="type-tag" id="s-type"></p>
     </div>
     <input type="text" id="s-input" placeholder="Type the English meaning…" autocomplete="off" spellcheck="false" style="margin-bottom:10px" />
-    <div class="row" style="gap:8px">
-      <button class="btn btn-sm" id="s-hint-btn" onclick="getHint()">hint</button>
-      <button class="btn-primary" style="flex:1" id="s-check-btn" onclick="checkAnswer()">check answer →</button>
-    </div>
+    <button class="btn-primary" style="width:100%" id="s-check-btn" onclick="checkAnswer()">check answer →</button>
     <div class="feedback" id="s-feedback"></div>
   </div>
 
@@ -395,35 +390,6 @@ function checkAnswer() {
   document.getElementById('s-check-btn').textContent = 'next word →';
   document.getElementById('s-input').disabled = true;
   updateStudyStats();
-}
-
-// ─── AI HINT ─────────────────────────────────────────────────────────────────
-// NOTE: For a production public website, move this API call to a backend server
-// so the API key is never exposed in the browser. Fine for local / school use.
-async function getHint() {
-  if (sAnswered) return;
-  const fb = document.getElementById('s-feedback');
-  fb.style.display = 'block';
-  fb.className = 'feedback fb-hint';
-  fb.textContent = 'Getting a hint…';
-  document.getElementById('s-hint-btn').disabled = true;
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: 'You are a friendly Latin tutor for high school students. Give a short hint (1–2 sentences) to help guess the meaning of a Latin word. Mention a related English word if possible. Never reveal the answer directly.',
-        messages: [{ role: 'user', content: `Hint for "${studyCurrent.latin}"${studyCurrent.type ? ' (' + studyCurrent.type + ')' : ''}. Answer: "${studyCurrent.english}". Do not say it directly.` }]
-      })
-    });
-    const data = await res.json();
-    fb.textContent = '💡 ' + (data.content?.map(b => b.text || '').join('') || 'Think about related English words!');
-  } catch {
-    fb.textContent = '💡 Think about English words that share the same Latin root.';
-  }
-  document.getElementById('s-hint-btn').disabled = false;
 }
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
