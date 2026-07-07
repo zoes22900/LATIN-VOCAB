@@ -120,6 +120,11 @@
   <header>
     <h1>Education Not Perfect</h1>
     <p>Create chapters, then study them</p>
+    <div id="auth-area" style="display:none;margin-top:12px">
+      <button id="btn-signin" class="btn-sm" style="display:none" onclick="fbSignIn()">Sign in with Google to sync</button>
+      <span id="auth-user" style="display:none;font-size:12px;color:var(--muted)"></span>
+      <button id="btn-signout" class="btn-sm" style="display:none;margin-left:8px" onclick="fbSignOut()">sign out</button>
+    </div>
   </header>
 
   <!-- ═══ HOME ═══ -->
@@ -222,7 +227,10 @@
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
 const KEY = 'latin-chapters';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
-function persist(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+function persist(data) {
+  localStorage.setItem(KEY, JSON.stringify(data));
+  if (window.cloudSave) window.cloudSave(data);
+}
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let chapters = load();
@@ -410,8 +418,78 @@ document.getElementById('new-latin').addEventListener('keydown', e => { if (e.ke
 document.getElementById('new-english').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('new-type').focus(); });
 document.getElementById('new-type').addEventListener('keydown', e => { if (e.key === 'Enter') addWordToNew(); });
 
+// ─── CLOUD SYNC HOOKS (used by the Firebase module below) ───────────────────
+window.getChapters = () => chapters;
+window.setChapters = data => {
+  chapters = Array.isArray(data) ? data : [];
+  localStorage.setItem(KEY, JSON.stringify(chapters));
+  showScreen('screen-home');
+};
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderHome();
+</script>
+
+<script type="module">
+// ─── FIREBASE ACCOUNTS & CLOUD SYNC ──────────────────────────────────────────
+// To activate: create a free project at https://console.firebase.google.com,
+// add a Web App, and paste its config below (replacing the PASTE_ME values).
+// Also enable Google under Authentication → Sign-in method, and create a
+// Firestore database. Until configured, the site saves locally as before.
+const firebaseConfig = {
+  apiKey: "PASTE_ME",
+  authDomain: "PASTE_ME.firebaseapp.com",
+  projectId: "PASTE_ME",
+  storageBucket: "PASTE_ME.firebasestorage.app",
+  messagingSenderId: "PASTE_ME",
+  appId: "PASTE_ME"
+};
+
+if (firebaseConfig.apiKey !== "PASTE_ME") {
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } =
+    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  const { getFirestore, doc, getDoc, setDoc } =
+    await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  let uid = null;
+
+  document.getElementById('auth-area').style.display = 'block';
+
+  window.fbSignIn = async () => {
+    try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+    catch (e) { if (e.code !== 'auth/popup-closed-by-user') alert('Sign-in failed: ' + e.message); }
+  };
+  window.fbSignOut = () => signOut(auth);
+
+  window.cloudSave = async data => {
+    if (!uid) return;
+    try { await setDoc(doc(db, 'users', uid), { chapters: data }); }
+    catch (e) { console.error('Cloud save failed:', e); }
+  };
+
+  onAuthStateChanged(auth, async user => {
+    uid = user ? user.uid : null;
+    document.getElementById('btn-signin').style.display  = user ? 'none' : 'inline-block';
+    document.getElementById('btn-signout').style.display = user ? 'inline-block' : 'none';
+    const label = document.getElementById('auth-user');
+    label.style.display = user ? 'inline' : 'none';
+    label.textContent = user ? '☁ syncing as ' + (user.displayName || user.email) : '';
+    if (!user) return;
+    try {
+      const snap  = await getDoc(doc(db, 'users', user.uid));
+      const cloud = snap.exists() ? snap.data().chapters : null;
+      if (cloud && cloud.length) {
+        window.setChapters(cloud);                    // account already has data: cloud copy wins
+      } else if (window.getChapters().length) {
+        await window.cloudSave(window.getChapters()); // first sign-in: upload local chapters
+      }
+    } catch (e) { console.error('Cloud load failed:', e); }
+  });
+}
 </script>
 </body>
 </html>
