@@ -12,26 +12,30 @@
     :root {
       --bg: #81d8d0; --surface: #ffffff; --border: #e8e4dc;
       --text: #1a1814; --muted: #7a7568; --accent: #3d2f1e;
+      --on-bg-muted: #2a5550;
       --surface2: #f3f0ea;
       --correct-bg:#edf7ed;--correct-text:#1e5c1e;--correct-border:#b6ddb6;
       --wrong-bg:#fdf0f0;--wrong-text:#8b1a1a;--wrong-border:#f0b8b8;
       --danger-text:#8b1a1a;--danger-border:#f0b8b8;--danger-bg:#fdf0f0;
       --warn-text:#7a4f00;
+      --m0:#d8d3c8; --m1:#e07a6a; --m2:#e0b44a; --m3:#5aa65a;
     }
     body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
 
     /* ── layout ── */
-    .page { max-width:560px; margin:0 auto; padding:2rem 1.25rem; }
+    .page { max-width:560px; margin:0 auto; padding:2rem 1rem; }
     .screen { display:none; }
     .screen.active { display:block; }
-    header { text-align:center; margin-bottom:2.5rem; }
+    header { text-align:center; margin-bottom:2rem; }
     header h1 { font-family:'Lora',serif; font-size:2rem; font-weight:600; color:var(--accent); letter-spacing:-0.5px; }
-    header p { font-size:13px; color:var(--muted); margin-top:4px; }
+    header p { font-size:13px; color:var(--on-bg-muted); margin-top:4px; }
 
     /* ── typography ── */
     h2 { font-size:1.25rem; font-weight:500; margin-bottom:4px; }
-    .sub { font-size:13px; color:var(--muted); margin-bottom:1.5rem; }
-    label { font-size:12px; color:var(--muted); display:block; margin-bottom:4px; }
+    .sub { font-size:13px; color:var(--on-bg-muted); margin-bottom:1.5rem; }
+    .card .sub { color:var(--muted); }
+    label { font-size:12px; color:var(--muted); display:block; margin-bottom:6px; }
+    .section-label { font-size:13px; font-weight:500; margin-bottom:12px; }
 
     /* ── buttons ── */
     button {
@@ -48,16 +52,18 @@
     .btn-sm { font-size:12px; padding:6px 12px; border-radius:8px; }
     .btn-danger { color:var(--danger-text); border-color:var(--danger-border); }
     .btn-danger:hover { background:var(--danger-bg); }
-    .btn-back { background:transparent; border-color:var(--border); margin-bottom:1.25rem; }
+    .btn-back { background:var(--surface); border-color:var(--border); margin-bottom:1.25rem; }
+    .full { width:100%; }
 
     /* ── inputs ── */
-    input[type=text] {
+    input[type=text], textarea {
       width:100%; font-family:'DM Sans',sans-serif; font-size:14px;
       padding:10px 14px; border-radius:10px; border:1px solid var(--border);
       background:var(--surface); color:var(--text); outline:none;
       transition:border-color 0.2s;
     }
-    input[type=text]:focus { border-color:var(--accent); }
+    textarea { resize:vertical; min-height:110px; line-height:1.5; }
+    input[type=text]:focus, textarea:focus { border-color:var(--accent); }
     input[type=text]:disabled { opacity:0.6; cursor:not-allowed; }
 
     /* ── cards ── */
@@ -72,17 +78,32 @@
     .mt-16 { margin-top:16px; }
     .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
 
+    /* ── profile ── */
+    .profile { display:flex; gap:10px; margin-bottom:1.5rem; }
+    .goal-wrap { background:var(--surface2); border-radius:99px; height:6px; overflow:hidden; margin-top:6px; }
+    .goal-bar { height:6px; background:var(--m3); border-radius:99px; transition:width 0.3s; }
+
     /* ── chapter list ── */
     .chapter-title { font-size:15px; font-weight:500; }
     .chapter-meta { font-size:12px; color:var(--muted); margin-top:2px; }
-    .badge { font-size:11px; padding:2px 8px; border-radius:99px; background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
+    .badge { font-size:11px; padding:2px 8px; border-radius:99px; background:var(--surface2); color:var(--muted); border:1px solid var(--border); white-space:nowrap; }
+    .mastery-wrap { background:var(--surface2); border-radius:99px; height:4px; overflow:hidden; margin-top:8px; }
+    .mastery-bar { height:4px; background:var(--m3); border-radius:99px; }
 
     /* ── word rows ── */
     .word-row { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid var(--border); }
     .word-row:last-child { border-bottom:none; }
     .word-latin { font-size:14px; font-weight:500; min-width:110px; font-style:italic; font-family:'Lora',serif; }
     .word-english { font-size:13px; color:var(--muted); flex:1; }
-    .word-type-badge { font-size:11px; color:var(--muted); min-width:90px; }
+    .word-type-badge { font-size:11px; color:var(--muted); min-width:80px; }
+    .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; background:var(--m0); }
+    .legend { display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:var(--muted); margin-bottom:10px; }
+    .legend span { display:flex; align-items:center; gap:4px; }
+
+    /* ── segmented options ── */
+    .seg { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+    .seg button { font-size:13px; padding:8px 12px; }
+    .seg button.on { background:var(--accent); color:#fff; border-color:transparent; }
 
     /* ── stats ── */
     .stats-row { display:flex; gap:10px; margin-bottom:1.25rem; }
@@ -91,27 +112,64 @@
     .stat-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; }
 
     /* ── flashcard ── */
-    .flashcard { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2.5rem 2rem; text-align:center; margin-bottom:1rem; min-height:160px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .latin-big { font-family:'Lora',serif; font-size:40px; font-weight:600; font-style:italic; color:var(--accent); }
+    .flashcard { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; margin-bottom:1rem; min-height:170px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .dir-tag { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+    .latin-big { font-family:'Lora',serif; font-size:36px; font-weight:600; color:var(--accent); word-break:break-word; }
+    .latin-big.is-latin { font-style:italic; }
     .type-tag { font-size:12px; color:var(--muted); margin-top:8px; }
-    .progress-wrap { background:var(--border); border-radius:99px; height:3px; margin-bottom:1.25rem; overflow:hidden; }
-    .progress-bar { height:3px; background:var(--accent); border-radius:99px; transition:width 0.3s; }
-    .streak-badge { font-size:12px; color:var(--warn-text); min-height:20px; margin-bottom:8px; text-align:center; }
+    .flash-answer { font-size:20px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); width:100%; }
+    .progress-wrap { background:rgba(255,255,255,0.6); border-radius:99px; height:5px; margin-bottom:1.25rem; overflow:hidden; }
+    .progress-bar { height:5px; background:var(--accent); border-radius:99px; transition:width 0.3s; }
+    .streak-badge { font-size:13px; color:var(--accent); font-weight:500; min-height:20px; margin-bottom:8px; text-align:center; }
+
+    /* ── answer areas ── */
+    .macrons { display:flex; gap:6px; margin-bottom:10px; }
+    .macrons button { padding:6px 12px; font-family:'Lora',serif; font-size:15px; }
+    .btn-pair { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .mc-grid { display:grid; gap:8px; }
+    .mc-opt { text-align:left; padding:12px 16px; font-size:15px; }
+    .mc-opt.is-latin { font-family:'Lora',serif; font-style:italic; }
+    .mc-opt .key { display:inline-block; width:20px; color:var(--muted); font-size:12px; }
+    .mc-opt.right { background:var(--correct-bg); border-color:var(--correct-border); color:var(--correct-text); opacity:1; }
+    .mc-opt.picked-wrong { background:var(--wrong-bg); border-color:var(--wrong-border); color:var(--wrong-text); opacity:1; }
 
     /* ── feedback ── */
-    .feedback { border-radius:10px; padding:12px 14px; font-size:13px; margin-top:12px; display:none; line-height:1.5; }
+    .feedback { border-radius:10px; padding:12px 14px; font-size:14px; margin-top:12px; display:none; line-height:1.5; }
+    .feedback b { font-weight:500; }
     .fb-ok  { background:var(--correct-bg); color:var(--correct-text); border:1px solid var(--correct-border); }
     .fb-no  { background:var(--wrong-bg);   color:var(--wrong-text);   border:1px solid var(--wrong-border); }
+    .link-btn { background:none; border:none; padding:0; font-size:13px; color:inherit; text-decoration:underline; cursor:pointer; margin-top:6px; }
+    .link-btn:hover { background:none; }
+    .hint { font-size:12px; color:var(--on-bg-muted); text-align:center; margin-top:10px; }
+
+    /* ── results ── */
+    .big-score { font-family:'Lora',serif; font-size:48px; font-weight:600; color:var(--accent); text-align:center; }
 
     /* ── empty state ── */
-    .empty { text-align:center; padding:2.5rem 1rem; color:var(--muted); font-size:14px; }
+    .empty { text-align:center; padding:2.5rem 1rem; color:var(--on-bg-muted); font-size:14px; }
+    .card .empty { color:var(--muted); }
 
-    /* ── chevron icon ── */
     .chevron { font-size:16px; color:var(--muted); }
 
-    footer { text-align:center; font-size:12px; color:var(--muted); margin-top:3rem; padding-bottom:2rem; }
+    footer { text-align:center; font-size:12px; color:var(--on-bg-muted); margin-top:3rem; padding-bottom:2rem; }
 
-    @media(max-width:480px){ .latin-big{font-size:32px;} header h1{font-size:1.6rem;} .grid-2{grid-template-columns:1fr;} }
+    /* ── laptop / desktop ── */
+    @media(min-width:900px){
+      .page { max-width:920px; padding-top:2.5rem; }
+      header h1 { font-size:2.4rem; }
+      .profile { max-width:640px; margin-left:auto; margin-right:auto; }
+      #chapter-list { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      #chapter-list .card { margin-bottom:0; }
+      #chapter-list .empty { grid-column:1/-1; }
+      #screen-chapter, #screen-edit { max-width:760px; margin-left:auto; margin-right:auto; }
+      #screen-setup, #screen-study, #screen-results { max-width:680px; margin-left:auto; margin-right:auto; }
+      .flashcard { min-height:230px; padding:2.5rem 2rem; }
+      .latin-big { font-size:46px; }
+      .mc-grid { grid-template-columns:1fr 1fr; }
+      .mc-opt { padding:16px 18px; }
+    }
+
+    @media(max-width:480px){ .latin-big{font-size:28px;} header h1{font-size:1.6rem;} .grid-2{grid-template-columns:1fr;} .word-type-badge{display:none;} }
   </style>
 </head>
 <body>
@@ -119,31 +177,39 @@
 
   <header>
     <h1>Education Not Perfect</h1>
-    <p>Create chapters, then study them</p>
+    <p>Free Latin vocabulary practice</p>
     <div id="auth-area" style="display:none;margin-top:12px">
       <button id="btn-signin" class="btn-sm" style="display:none" onclick="fbSignIn()">Sign in with Google to sync</button>
-      <span id="auth-user" style="display:none;font-size:12px;color:var(--muted)"></span>
+      <span id="auth-user" style="display:none;font-size:12px;color:var(--on-bg-muted)"></span>
       <button id="btn-signout" class="btn-sm" style="display:none;margin-left:8px" onclick="fbSignOut()">sign out</button>
     </div>
   </header>
 
   <!-- ═══ HOME ═══ -->
   <div id="screen-home" class="screen active">
-    <div class="row-between" style="margin-bottom:1.5rem">
+    <div class="profile">
+      <div class="stat"><span class="stat-num" id="p-points">0</span><span class="stat-label">points</span></div>
+      <div class="stat"><span class="stat-num" id="p-streak">0</span><span class="stat-label">day streak</span></div>
+      <div class="stat">
+        <span class="stat-num" id="p-today">0</span><span class="stat-label" id="p-goal-label">of 100 today</span>
+        <div class="goal-wrap"><div class="goal-bar" id="p-goal-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="row-between" style="margin-bottom:1.25rem">
       <div>
         <h2>My chapters</h2>
         <p class="sub" style="margin:0">Pick a chapter to study, or create a new one</p>
       </div>
-      <button class="btn-primary btn-sm" onclick="showScreen('screen-new-chapter')" style="white-space:nowrap">+ New chapter</button>
+      <button class="btn-primary btn-sm" onclick="openEditor(null)" style="white-space:nowrap">+ New chapter</button>
     </div>
     <div id="chapter-list"></div>
   </div>
 
-  <!-- ═══ NEW CHAPTER ═══ -->
-  <div id="screen-new-chapter" class="screen">
-    <button class="btn btn-back btn-sm" onclick="showScreen('screen-home')">← back</button>
-    <h2>Create a chapter</h2>
-    <p class="sub">Give it a name, then add words one by one</p>
+  <!-- ═══ NEW / EDIT CHAPTER ═══ -->
+  <div id="screen-edit" class="screen">
+    <button class="btn-back btn-sm" onclick="cancelEditor()">← back</button>
+    <h2 id="edit-title">Create a chapter</h2>
+    <p class="sub">Give it a name, then add words one by one or paste a list</p>
 
     <div class="card">
       <label for="chapter-name-input">Chapter name</label>
@@ -151,141 +217,296 @@
     </div>
 
     <div class="card mt-12">
-      <p style="font-size:13px;font-weight:500;margin-bottom:12px">Add a word</p>
+      <p class="section-label">Add a word</p>
       <div class="grid-2">
         <div>
           <label for="new-latin">Latin word</label>
-          <input type="text" id="new-latin" placeholder="e.g. amare" />
+          <input type="text" id="new-latin" placeholder="e.g. amo, amare" />
         </div>
         <div>
           <label for="new-english">English meaning</label>
-          <input type="text" id="new-english" placeholder="e.g. to love / love" />
+          <input type="text" id="new-english" placeholder="e.g. to love / like" />
         </div>
       </div>
       <div style="margin-bottom:12px">
-        <label for="new-type">Grammatical type <span style="color:var(--muted);font-weight:400">(optional)</span></label>
+        <label for="new-type">Grammatical type (optional)</label>
         <input type="text" id="new-type" placeholder="e.g. verb, noun (f.), adjective" />
       </div>
-      <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Tip: separate multiple accepted answers with / e.g. "to love / love"</p>
-      <button class="btn-primary" style="width:100%" onclick="addWordToNew()">+ Add word</button>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:12px">Separate accepted answers with / e.g. "to love / like". Macrons are optional when answering.</p>
+      <button class="btn-primary full" onclick="addWordToNew()">+ Add word</button>
+    </div>
+
+    <div class="card mt-12">
+      <p class="section-label">Or paste many words at once</p>
+      <label for="bulk-input">One word per line: <i>latin = english</i> (optionally <i>= type</i>). Columns copied from a spreadsheet also work.</label>
+      <textarea id="bulk-input" placeholder="puella, puellae = girl = noun (f.)&#10;amo, amare = to love / like = verb&#10;bonus, bona, bonum = good"></textarea>
+      <button class="full mt-12" onclick="addBulk()">+ Add these words</button>
     </div>
 
     <div id="new-word-list" class="card mt-12" style="display:none">
       <div class="row-between" style="margin-bottom:10px">
-        <p style="font-size:13px;font-weight:500">Words added</p>
+        <p style="font-size:13px;font-weight:500">Words in this chapter</p>
         <span class="badge" id="new-word-count">0</span>
       </div>
       <div id="new-words-inner"></div>
     </div>
 
     <div class="row mt-16" style="justify-content:flex-end;gap:8px">
-      <button class="btn btn-sm" onclick="cancelNewChapter()">cancel</button>
+      <button class="btn-sm" onclick="cancelEditor()">cancel</button>
       <button class="btn-primary btn-sm" onclick="saveChapter()">✓ Save chapter</button>
     </div>
   </div>
 
   <!-- ═══ VIEW CHAPTER ═══ -->
   <div id="screen-chapter" class="screen">
-    <button class="btn btn-back btn-sm" onclick="showScreen('screen-home')">← back</button>
-    <div class="row-between" style="margin-bottom:1.5rem">
+    <button class="btn-back btn-sm" onclick="showScreen('screen-home')">← back</button>
+    <div class="row-between" style="margin-bottom:1.25rem">
       <div>
         <h2 id="chapter-view-title"></h2>
         <p class="sub" style="margin:0" id="chapter-view-meta"></p>
       </div>
-      <div class="row" style="gap:8px;flex-wrap:wrap">
-        <button class="btn btn-sm btn-danger" onclick="deleteCurrentChapter()">delete</button>
-        <button class="btn-primary btn-sm" onclick="startStudy()">▶ study</button>
-      </div>
+      <button class="btn-primary" onclick="openSetup()">▶ Study</button>
+    </div>
+    <div class="row" style="gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn-sm" onclick="openEditor(currentIdx)">edit</button>
+      <button class="btn-sm" onclick="shareChapter()">share link</button>
+      <button class="btn-sm btn-danger" onclick="deleteCurrentChapter()">delete</button>
     </div>
     <div id="chapter-word-list"></div>
   </div>
 
+  <!-- ═══ STUDY SETUP ═══ -->
+  <div id="screen-setup" class="screen">
+    <button class="btn-back btn-sm" onclick="openChapter(currentIdx)">← back</button>
+    <h2 id="setup-title"></h2>
+    <p class="sub">Choose how you want to practise</p>
+    <div class="card">
+      <label>Mode</label>
+      <div class="seg" data-key="mode">
+        <button data-v="type">Typing</button>
+        <button data-v="mc">Multiple choice</button>
+        <button data-v="flash">Flashcards</button>
+      </div>
+      <label>Direction</label>
+      <div class="seg" data-key="dir">
+        <button data-v="l2e">Latin → English</button>
+        <button data-v="e2l">English → Latin</button>
+        <button data-v="mix">Both</button>
+      </div>
+      <label>Words</label>
+      <div class="seg" data-key="words">
+        <button data-v="all">All words</button>
+        <button data-v="weak">Not mastered yet</button>
+        <button data-v="hard">Difficult only</button>
+      </div>
+      <label>Timing</label>
+      <div class="seg" data-key="timed" style="margin-bottom:0">
+        <button data-v="0">Untimed</button>
+        <button data-v="1">60-second challenge</button>
+      </div>
+    </div>
+    <button class="btn-primary full mt-12" onclick="beginFromSetup()">Start →</button>
+    <p class="hint" id="setup-hint"></p>
+  </div>
+
   <!-- ═══ STUDY ═══ -->
   <div id="screen-study" class="screen">
-    <button class="btn btn-back btn-sm" onclick="exitStudy()">← back</button>
+    <button class="btn-back btn-sm" onclick="exitStudy()">← quit</button>
     <div class="stats-row">
+      <div class="stat"><span class="stat-num" id="s-points">0</span><span class="stat-label">points</span></div>
       <div class="stat"><span class="stat-num" id="s-correct">0</span><span class="stat-label">correct</span></div>
-      <div class="stat"><span class="stat-num" id="s-streak">0</span><span class="stat-label">streak</span></div>
-      <div class="stat"><span class="stat-num" id="s-total">0</span><span class="stat-label">attempted</span></div>
+      <div class="stat"><span class="stat-num" id="s-remaining">0</span><span class="stat-label" id="s-remaining-label">to go</span></div>
     </div>
     <div class="progress-wrap"><div class="progress-bar" id="s-progress" style="width:0%"></div></div>
     <div class="streak-badge" id="s-streak-badge"></div>
     <div class="flashcard">
+      <p class="dir-tag" id="s-dir"></p>
       <p class="latin-big" id="s-word">—</p>
       <p class="type-tag" id="s-type"></p>
+      <p class="flash-answer" id="s-flash-answer" style="display:none"></p>
     </div>
-    <input type="text" id="s-input" placeholder="Type the English meaning…" autocomplete="off" spellcheck="false" style="margin-bottom:10px" />
-    <button class="btn-primary" style="width:100%" id="s-check-btn" onclick="checkAnswer()">check answer →</button>
+
+    <div id="area-type">
+      <div class="macrons" id="s-macrons">
+        <button type="button" tabindex="-1">ā</button><button type="button" tabindex="-1">ē</button><button type="button" tabindex="-1">ī</button><button type="button" tabindex="-1">ō</button><button type="button" tabindex="-1">ū</button>
+      </div>
+      <input type="text" id="s-input" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-bottom:10px" />
+      <div class="btn-pair" id="s-type-btns">
+        <button onclick="dontKnow()">I don't know</button>
+        <button class="btn-primary" onclick="submitTyped()">check →</button>
+      </div>
+      <button class="btn-primary full" id="s-next-btn" style="display:none" onclick="nextQuestion()">next →</button>
+    </div>
+
+    <div id="area-mc">
+      <div class="mc-grid" id="s-mc"></div>
+      <button class="btn-primary full mt-12" id="s-mc-next" style="display:none" onclick="nextQuestion()">next →</button>
+    </div>
+
+    <div id="area-flash">
+      <button class="btn-primary full" id="s-flash-show" onclick="revealFlash()">show answer</button>
+      <div class="btn-pair" id="s-flash-btns" style="display:none">
+        <button onclick="flashAnswer(false)">still learning</button>
+        <button class="btn-primary" onclick="flashAnswer(true)">I knew it ✓</button>
+      </div>
+    </div>
+
     <div class="feedback" id="s-feedback"></div>
+    <p class="hint" id="s-hint"></p>
   </div>
 
-  <footer>Education Not Perfect &mdash; an open-source passion project</footer>
+  <!-- ═══ RESULTS ═══ -->
+  <div id="screen-results" class="screen">
+    <div class="card" style="text-align:center;padding:1.5rem">
+      <p class="dir-tag" id="r-title">session complete</p>
+      <p class="big-score" id="r-accuracy">0%</p>
+      <p class="sub" style="margin:0">accuracy</p>
+    </div>
+    <div class="stats-row mt-12">
+      <div class="stat"><span class="stat-num" id="r-points">0</span><span class="stat-label">points</span></div>
+      <div class="stat"><span class="stat-num" id="r-correct">0</span><span class="stat-label">correct</span></div>
+      <div class="stat"><span class="stat-num" id="r-best">0</span><span class="stat-label">best streak</span></div>
+      <div class="stat"><span class="stat-num" id="r-time">0:00</span><span class="stat-label">time</span></div>
+    </div>
+    <div id="r-missed"></div>
+    <div class="row mt-12" style="gap:8px;flex-wrap:wrap">
+      <button class="btn-primary" id="r-retry-missed" onclick="practiseMissed()">practise missed words</button>
+      <button onclick="startSession(lastSessionWords)">go again</button>
+      <button onclick="openChapter(currentIdx)">back to chapter</button>
+    </div>
+  </div>
+
+  <footer>Education Not Perfect &mdash; a free, open-source passion project for Latin students</footer>
 
 </div><!-- /page -->
 
 <script>
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
-const KEY = 'latin-chapters';
-function load() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } }
-function persist(data) {
-  localStorage.setItem(KEY, JSON.stringify(data));
-  if (window.cloudSave) window.cloudSave(data);
+const KEY = 'latin-chapters', PKEY = 'latin-profile', SKEY = 'latin-settings';
+const DEFAULT_PROFILE = { points: 0, daily: {}, streak: 0, lastDay: null, goal: 100 };
+function loadJSON(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } }
+function saveLocal() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(chapters));
+    localStorage.setItem(PKEY, JSON.stringify(profile));
+  } catch {}
+}
+function persist() {
+  saveLocal();
+  if (window.cloudSave) window.cloudSave({ chapters, profile });
 }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-let chapters = load();
-let currentIdx = null;
+let chapters = loadJSON(KEY, []);
+let profile  = { ...DEFAULT_PROFILE, ...loadJSON(PKEY, {}) };
+let settings = { mode: 'type', dir: 'l2e', words: 'all', timed: '0', ...loadJSON(SKEY, {}) };
+let currentIdx = null, editIdx = null;
 let newWords = [];
-let studyDeck = [], studyIdx = 0, studyCurrent = null;
-let sScore = 0, sStreak = 0, sTotal = 0, sAnswered = false;
+let S = null;               // active study session
+let lastSessionWords = [];  // word indices of the last session, for "go again"
+const POINTS = { type: 10, mc: 5, flash: 3 };
+const TIMED_SECONDS = 60;
+const $ = id => document.getElementById(id);
 
 // ─── SCREEN ROUTER ────────────────────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  $(id).classList.add('active');
   if (id === 'screen-home') renderHome();
+  window.scrollTo(0, 0);
+}
+
+// ─── PROFILE: POINTS, DAILY GOAL, DAY STREAK ─────────────────────────────────
+function dayKey(d = new Date()) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function yesterdayKey() { const d = new Date(); d.setDate(d.getDate() - 1); return dayKey(d); }
+function addPoints(n) {
+  const today = dayKey();
+  if (profile.lastDay !== today) {
+    profile.streak = profile.lastDay === yesterdayKey() ? profile.streak + 1 : 1;
+    profile.lastDay = today;
+    const keys = Object.keys(profile.daily).sort();
+    keys.slice(0, Math.max(0, keys.length - 30)).forEach(k => delete profile.daily[k]);
+  }
+  profile.points += n;
+  profile.daily[today] = (profile.daily[today] || 0) + n;
+}
+function currentStreak() {
+  return profile.lastDay === dayKey() || profile.lastDay === yesterdayKey() ? profile.streak : 0;
+}
+function renderProfile() {
+  const today = profile.daily[dayKey()] || 0;
+  $('p-points').textContent = profile.points;
+  $('p-streak').textContent = currentStreak();
+  $('p-today').textContent = today;
+  $('p-goal-label').textContent = 'of ' + profile.goal + ' today';
+  $('p-goal-bar').style.width = Math.min(100, Math.round(today / profile.goal * 100)) + '%';
+}
+
+// ─── MASTERY ──────────────────────────────────────────────────────────────────
+// Each word keeps s (strength 0–5), n (attempts) and c (correct answers).
+function mastery(words) {
+  if (!words.length) return 0;
+  return Math.round(words.reduce((a, w) => a + Math.min(w.s || 0, 5), 0) / (words.length * 5) * 100);
+}
+function levelColor(w) {
+  if (!w.n) return 'var(--m0)';
+  const s = w.s || 0;
+  return s >= 4 ? 'var(--m3)' : s >= 2 ? 'var(--m2)' : 'var(--m1)';
 }
 
 // ─── HOME ─────────────────────────────────────────────────────────────────────
 function renderHome() {
-  const el = document.getElementById('chapter-list');
+  renderProfile();
+  const el = $('chapter-list');
   if (!chapters.length) {
     el.innerHTML = '<div class="empty">No chapters yet &mdash; create your first one!</div>';
     return;
   }
-  el.innerHTML = chapters.map((ch, i) => `
+  el.innerHTML = chapters.map((ch, i) => {
+    const m = mastery(ch.words);
+    return `
     <div class="card chapter-card" onclick="openChapter(${i})">
       <div class="row-between">
         <div>
           <p class="chapter-title">${esc(ch.name)}</p>
-          <p class="chapter-meta">${ch.words.length} word${ch.words.length !== 1 ? 's' : ''}</p>
+          <p class="chapter-meta">${ch.words.length} word${ch.words.length !== 1 ? 's' : ''} · ${m}% mastered</p>
         </div>
-        <div class="row" style="gap:8px">
-          <span class="badge">${ch.words.length} words</span>
-          <span class="chevron">›</span>
-        </div>
+        <span class="chevron">›</span>
       </div>
-    </div>`).join('');
+      <div class="mastery-wrap"><div class="mastery-bar" style="width:${m}%"></div></div>
+    </div>`;
+  }).join('');
 }
 
 // ─── VIEW CHAPTER ─────────────────────────────────────────────────────────────
 function openChapter(i) {
+  stopTimer();
+  S = null;
   currentIdx = i;
   const ch = chapters[i];
-  document.getElementById('chapter-view-title').textContent = ch.name;
-  document.getElementById('chapter-view-meta').textContent = ch.words.length + ' word' + (ch.words.length !== 1 ? 's' : '');
-  const el = document.getElementById('chapter-word-list');
+  $('chapter-view-title').textContent = ch.name;
+  $('chapter-view-meta').textContent = ch.words.length + ' word' + (ch.words.length !== 1 ? 's' : '') + ' · ' + mastery(ch.words) + '% mastered';
+  const el = $('chapter-word-list');
   if (!ch.words.length) {
     el.innerHTML = '<div class="empty">No words in this chapter yet.</div>';
   } else {
-    el.innerHTML = `<div class="card"><div>${
-      ch.words.map(w => `
+    el.innerHTML = `<div class="card">
+      <div class="legend">
+        <span><i class="dot" style="background:var(--m0)"></i>new</span>
+        <span><i class="dot" style="background:var(--m1)"></i>difficult</span>
+        <span><i class="dot" style="background:var(--m2)"></i>learning</span>
+        <span><i class="dot" style="background:var(--m3)"></i>mastered</span>
+      </div>
+      <div>${ch.words.map(w => `
         <div class="word-row">
+          <i class="dot" style="background:${levelColor(w)}" title="${w.n ? w.c + ' / ' + w.n + ' correct' : 'not practised yet'}"></i>
           <span class="word-latin">${esc(w.latin)}</span>
           <span class="word-type-badge">${esc(w.type || '')}</span>
           <span class="word-english">${esc(w.english)}</span>
-        </div>`).join('')
-    }</div></div>`;
+        </div>`).join('')}
+      </div></div>`;
   }
   showScreen('screen-chapter');
 }
@@ -293,111 +514,487 @@ function openChapter(i) {
 function deleteCurrentChapter() {
   if (!confirm('Delete "' + chapters[currentIdx].name + '"? This cannot be undone.')) return;
   chapters.splice(currentIdx, 1);
-  persist(chapters);
+  persist();
   showScreen('screen-home');
 }
 
-// ─── NEW CHAPTER ──────────────────────────────────────────────────────────────
+// ─── SHARE LINKS ──────────────────────────────────────────────────────────────
+function b64encode(str) {
+  let bin = '';
+  new TextEncoder().encode(str).forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64decode(s) {
+  const bin = atob(s.replace(/-/g, '+').replace(/_/g, '/'));
+  return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+}
+async function shareChapter() {
+  const ch = chapters[currentIdx];
+  const payload = { n: ch.name, w: ch.words.map(w => [w.latin, w.english, w.type || '']) };
+  const url = location.origin + location.pathname + '#import=' + b64encode(JSON.stringify(payload));
+  try {
+    await navigator.clipboard.writeText(url);
+    alert('Share link copied! Send it to classmates — opening it adds "' + ch.name + '" to their chapters.');
+  } catch {
+    prompt('Copy this link and send it to classmates:', url);
+  }
+}
+let importChecked = false;
+function checkImport() {
+  if (importChecked) return;
+  importChecked = true;
+  const m = location.hash.match(/^#import=(.+)$/);
+  if (!m) return;
+  history.replaceState(null, '', location.pathname);
+  try {
+    const p = JSON.parse(b64decode(m[1]));
+    if (!p.n || !Array.isArray(p.w)) throw new Error('bad payload');
+    if (confirm('Add the shared chapter "' + p.n + '" (' + p.w.length + ' words) to your chapters?')) {
+      chapters.push({ name: String(p.n), words: p.w.map(([latin, english, type]) => ({ latin: String(latin), english: String(english), type: String(type || '') })) });
+      persist();
+      showScreen('screen-home');
+    }
+  } catch {
+    alert('Sorry, that share link is broken or incomplete.');
+  }
+}
+
+// ─── NEW / EDIT CHAPTER ───────────────────────────────────────────────────────
+function openEditor(i) {
+  editIdx = i;
+  const ch = i === null ? null : chapters[i];
+  newWords = ch ? ch.words.map(w => ({ ...w })) : [];
+  $('edit-title').textContent = ch ? 'Edit chapter' : 'Create a chapter';
+  $('chapter-name-input').value = ch ? ch.name : '';
+  $('bulk-input').value = '';
+  renderNewWords();
+  showScreen('screen-edit');
+}
+
+function cancelEditor() {
+  const back = editIdx;
+  newWords = [];
+  editIdx = null;
+  if (back === null) showScreen('screen-home'); else openChapter(back);
+}
+
 function addWordToNew() {
-  const latin   = document.getElementById('new-latin').value.trim();
-  const english = document.getElementById('new-english').value.trim();
-  const type    = document.getElementById('new-type').value.trim();
+  const latin   = $('new-latin').value.trim();
+  const english = $('new-english').value.trim();
+  const type    = $('new-type').value.trim();
   if (!latin || !english) { alert('Please fill in both Latin and English.'); return; }
   newWords.push({ latin, english, type });
-  document.getElementById('new-latin').value = '';
-  document.getElementById('new-english').value = '';
-  document.getElementById('new-type').value = '';
-  document.getElementById('new-latin').focus();
+  $('new-latin').value = '';
+  $('new-english').value = '';
+  $('new-type').value = '';
+  $('new-latin').focus();
   renderNewWords();
 }
 
+function addBulk() {
+  const lines = $('bulk-input').value.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!lines.length) return;
+  const bad = [];
+  lines.forEach(l => {
+    const parts = (l.includes('\t') ? l.split('\t') : l.split(/\s*=\s*|\s+[-–—]\s+/)).map(p => p.trim()).filter(Boolean);
+    if (parts.length >= 2) newWords.push({ latin: parts[0], english: parts[1], type: parts[2] || '' });
+    else bad.push(l);
+  });
+  $('bulk-input').value = bad.join('\n');
+  renderNewWords();
+  if (bad.length) alert(bad.length + ' line(s) could not be read and were left in the box. Use the format: latin = english');
+}
+
 function renderNewWords() {
-  const wrap = document.getElementById('new-word-list');
-  wrap.style.display = newWords.length ? 'block' : 'none';
-  document.getElementById('new-word-count').textContent = newWords.length;
-  document.getElementById('new-words-inner').innerHTML = newWords.map((w, i) => `
+  $('new-word-list').style.display = newWords.length ? 'block' : 'none';
+  $('new-word-count').textContent = newWords.length;
+  $('new-words-inner').innerHTML = newWords.map((w, i) => `
     <div class="word-row">
       <span class="word-latin">${esc(w.latin)}</span>
       <span class="word-type-badge">${esc(w.type)}</span>
       <span class="word-english">${esc(w.english)}</span>
-      <button class="btn btn-sm btn-danger" onclick="removeNewWord(${i})" style="padding:4px 8px;font-size:11px">✕</button>
+      <button class="btn-sm btn-danger" onclick="removeNewWord(${i})" style="padding:4px 8px;font-size:11px">✕</button>
     </div>`).join('');
 }
 
 function removeNewWord(i) { newWords.splice(i, 1); renderNewWords(); }
 
 function saveChapter() {
-  const name = document.getElementById('chapter-name-input').value.trim();
-  if (!name)          { alert('Please give your chapter a name.'); return; }
+  const name = $('chapter-name-input').value.trim();
+  if (!name)            { alert('Please give your chapter a name.'); return; }
   if (!newWords.length) { alert('Please add at least one word.'); return; }
-  chapters.push({ name, words: [...newWords] });
-  persist(chapters);
-  cancelNewChapter();
-  showScreen('screen-home');
-}
-
-function cancelNewChapter() {
+  let target;
+  if (editIdx === null) { chapters.push({ name, words: [...newWords] }); target = chapters.length - 1; }
+  else { chapters[editIdx] = { ...chapters[editIdx], name, words: [...newWords] }; target = editIdx; }
+  persist();
   newWords = [];
-  document.getElementById('chapter-name-input').value = '';
-  renderNewWords();
+  editIdx = null;
+  openChapter(target);
 }
 
-// ─── STUDY ────────────────────────────────────────────────────────────────────
-function startStudy() {
+// ─── STUDY SETUP ──────────────────────────────────────────────────────────────
+function openSetup() {
   const ch = chapters[currentIdx];
   if (!ch.words.length) { alert('Add some words first!'); return; }
-  studyDeck = shuffle([...ch.words]);
-  studyIdx = 0; sScore = 0; sStreak = 0; sTotal = 0; sAnswered = false;
-  updateStudyStats();
-  nextCard();
-  showScreen('screen-study');
+  $('setup-title').textContent = ch.name;
+  renderSetup();
+  showScreen('screen-setup');
 }
 
-function exitStudy() { openChapter(currentIdx); }
-
-function nextCard() {
-  sAnswered = false;
-  document.getElementById('s-input').value = '';
-  document.getElementById('s-input').disabled = false;
-  document.getElementById('s-feedback').style.display = 'none';
-  document.getElementById('s-check-btn').textContent = 'check answer →';
-  if (studyIdx >= studyDeck.length) { studyIdx = 0; shuffle(studyDeck); }
-  studyCurrent = studyDeck[studyIdx++];
-  document.getElementById('s-word').textContent = studyCurrent.latin;
-  document.getElementById('s-type').textContent = studyCurrent.type || '';
-  document.getElementById('s-progress').style.width = Math.round((studyIdx / studyDeck.length) * 100) + '%';
-  document.getElementById('s-input').focus();
+function renderSetup() {
+  document.querySelectorAll('#screen-setup .seg').forEach(seg => {
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', settings[seg.dataset.key] === b.dataset.v));
+  });
+  const hints = {
+    type: 'Type each answer. Get one wrong and it comes back later — you finish when every word is right.',
+    mc: 'Pick the right answer from four choices. Keys 1–4 work too.',
+    flash: 'Reveal each answer and be honest about whether you knew it.'
+  };
+  $('setup-hint').textContent = settings.timed === '1'
+    ? 'Answer as many as you can in ' + TIMED_SECONDS + ' seconds.'
+    : hints[settings.mode];
 }
 
-function updateStudyStats() {
-  document.getElementById('s-correct').textContent = sScore;
-  document.getElementById('s-streak').textContent  = sStreak;
-  document.getElementById('s-total').textContent   = sTotal;
-  document.getElementById('s-streak-badge').textContent = sStreak >= 3 ? '🔥 ' + sStreak + ' in a row!' : '';
-}
+document.querySelectorAll('#screen-setup .seg').forEach(seg => {
+  seg.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    settings[seg.dataset.key] = b.dataset.v;
+    try { localStorage.setItem(SKEY, JSON.stringify(settings)); } catch {}
+    renderSetup();
+  });
+});
 
-function checkAnswer() {
-  if (sAnswered) { nextCard(); return; }
-  const raw = document.getElementById('s-input').value.trim().toLowerCase();
-  if (!raw) return;
-  sAnswered = true; sTotal++;
-  const norm = s => s.toLowerCase().replace(/^to /, '').trim();
-  const answers = studyCurrent.english.split('/').map(s => s.trim());
-  const correct = answers.some(a => norm(raw) === norm(a));
-  const fb = document.getElementById('s-feedback');
-  fb.style.display = 'block';
-  if (correct) {
-    sScore++; sStreak++;
-    fb.className = 'feedback fb-ok';
-    fb.textContent = '✓ Correct! ' + studyCurrent.latin + ' = ' + answers[0];
-  } else {
-    sStreak = 0;
-    fb.className = 'feedback fb-no';
-    fb.textContent = '✗ Not quite. The answer is: ' + studyCurrent.english;
+function beginFromSetup() {
+  const words = chapters[currentIdx].words;
+  if (settings.mode === 'mc' && words.length < 2) { alert('Multiple choice needs at least 2 words in the chapter.'); return; }
+  const filters = {
+    all:  () => true,
+    weak: w => (w.s || 0) < 4,
+    hard: w => w.n > 0 && (w.s || 0) < 2,
+  };
+  const idxs = words.map((w, i) => i).filter(i => filters[settings.words](words[i]));
+  if (!idxs.length) {
+    alert(settings.words === 'hard' ? 'No difficult words — nice! Choose "All words" instead.' : 'Every word is mastered — nice! Choose "All words" instead.');
+    return;
   }
-  document.getElementById('s-check-btn').textContent = 'next word →';
-  document.getElementById('s-input').disabled = true;
-  updateStudyStats();
+  startSession(idxs);
+}
+
+// ─── STUDY SESSION ────────────────────────────────────────────────────────────
+function startSession(wordIdxs) {
+  stopTimer();
+  lastSessionWords = [...wordIdxs];
+  S = {
+    mode: settings.mode, dir: settings.dir, timed: settings.timed === '1',
+    wordIdxs: [...wordIdxs], queue: shuffle([...wordIdxs]),
+    done: new Set(), missed: new Set(),
+    correct: 0, wrong: 0, streak: 0, best: 0, points: 0,
+    start: Date.now(), timeLeft: TIMED_SECONDS,
+    cur: null, phase: 'answer', undo: null, autoNext: null, timer: null,
+  };
+  $('area-type').style.display  = S.mode === 'type'  ? 'block' : 'none';
+  $('area-mc').style.display    = S.mode === 'mc'    ? 'block' : 'none';
+  $('area-flash').style.display = S.mode === 'flash' ? 'block' : 'none';
+  $('s-remaining-label').textContent = S.timed ? 'seconds' : 'to go';
+  showScreen('screen-study');
+  if (S.timed) S.timer = setInterval(tick, 1000);
+  nextQuestion();
+}
+
+function stopTimer() {
+  if (S) { clearInterval(S.timer); clearTimeout(S.autoNext); }
+}
+
+function exitStudy() {
+  if (S && (S.correct || S.wrong) && !confirm('Quit this session? Your points so far are kept.')) return;
+  openChapter(currentIdx);
+}
+
+function tick() {
+  S.timeLeft--;
+  updateStats();
+  if (S.timeLeft <= 0) finishSession();
+}
+
+const word = wi => chapters[currentIdx].words[wi];
+
+function nextQuestion() {
+  if (!S) return;
+  clearTimeout(S.autoNext);
+  if (!S.queue.length) {
+    if (!S.timed) return finishSession();
+    S.queue = shuffle([...S.wordIdxs]);
+  }
+  const wi = S.queue.shift();
+  const dir = S.dir === 'mix' ? (Math.random() < 0.5 ? 'l2e' : 'e2l') : S.dir;
+  S.cur = { wi, dir };
+  S.phase = 'answer';
+  S.undo = null;
+  const w = word(wi);
+
+  $('s-dir').textContent = dir === 'l2e' ? 'translate into English' : 'translate into Latin';
+  $('s-word').textContent = dir === 'l2e' ? w.latin : w.english;
+  $('s-word').classList.toggle('is-latin', dir === 'l2e');
+  $('s-type').textContent = w.type || '';
+  $('s-flash-answer').style.display = 'none';
+  $('s-feedback').style.display = 'none';
+  $('s-hint').textContent = '';
+
+  if (S.mode === 'type') {
+    const inp = $('s-input');
+    inp.value = '';
+    inp.disabled = false;
+    inp.placeholder = dir === 'l2e' ? 'Type the English meaning…' : 'Type the Latin word…';
+    $('s-macrons').style.display = dir === 'e2l' ? 'flex' : 'none';
+    $('s-type-btns').style.display = 'grid';
+    $('s-next-btn').style.display = 'none';
+    inp.focus();
+  } else if (S.mode === 'mc') {
+    renderMC();
+  } else {
+    $('s-flash-show').style.display = 'block';
+    $('s-flash-btns').style.display = 'none';
+  }
+  updateStats();
+}
+
+function updateStats() {
+  $('s-points').textContent = S.points;
+  $('s-correct').textContent = S.correct;
+  if (S.timed) {
+    $('s-remaining').textContent = Math.max(0, S.timeLeft);
+    $('s-progress').style.width = Math.round((TIMED_SECONDS - S.timeLeft) / TIMED_SECONDS * 100) + '%';
+  } else {
+    $('s-remaining').textContent = S.wordIdxs.length - S.done.size;
+    $('s-progress').style.width = Math.round(S.done.size / S.wordIdxs.length * 100) + '%';
+  }
+  $('s-streak-badge').textContent = S.streak >= 3 ? '🔥 ' + S.streak + ' in a row!' : '';
+}
+
+// Update the word's mastery and the session score. Returns what is needed to undo it.
+function record(ok) {
+  const wi = S.cur.wi, w = word(wi);
+  const undo = { s: w.s || 0, n: w.n || 0, c: w.c || 0, wasMissed: S.missed.has(wi), streak: S.streak };
+  w.n = (w.n || 0) + 1;
+  if (ok) {
+    w.c = (w.c || 0) + 1;
+    w.s = Math.min(5, (w.s || 0) + 1);
+    S.correct++; S.streak++; S.best = Math.max(S.best, S.streak);
+    const p = POINTS[S.mode];
+    S.points += p;
+    addPoints(p);
+    S.done.add(wi);
+  } else {
+    w.s = Math.max(0, (w.s || 0) - 2);
+    S.wrong++; S.streak = 0;
+    S.missed.add(wi);
+    S.queue.splice(Math.min(3, S.queue.length), 0, wi);  // ask it again soon
+  }
+  persist();
+  updateStats();
+  return undo;
+}
+
+function showFeedback(ok, html) {
+  const fb = $('s-feedback');
+  fb.className = 'feedback ' + (ok ? 'fb-ok' : 'fb-no');
+  fb.innerHTML = html;
+  fb.style.display = 'block';
+}
+
+function scheduleNext(ms) {
+  clearTimeout(S.autoNext);
+  S.autoNext = setTimeout(nextQuestion, ms);
+}
+
+// ─── ANSWER CHECKING ─────────────────────────────────────────────────────────
+// Lenient like Education Perfect: ignores case, macrons, punctuation and a leading to/the/a/an.
+function norm(s) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/[.!?'"’‘“”]/g, '').replace(/\s+/g, ' ').trim()
+    .replace(/^(to|the|a|an) /, '');
+}
+function acceptedAnswers(w, dir) {
+  const list = dir === 'l2e'
+    ? w.english.split(/[\/;,]/).flatMap(a => [a.replace(/\(.*?\)/g, ''), a.replace(/[()]/g, '')])
+    : w.latin.split('/').flatMap(a => [a, a.split(',')[0]]);  // "amo, amare" also accepts "amo"
+  return [...new Set(list.map(norm).filter(Boolean))];
+}
+const answerText = (w, dir) => dir === 'l2e' ? w.english : w.latin;
+function lev(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i-1][j] + 1, d[i][j-1] + 1, d[i-1][j-1] + (a[i-1] === b[j-1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function grade(val, w, dir) {
+  const v = norm(val), alts = acceptedAnswers(w, dir);
+  if (alts.includes(v)) return 'ok';
+  if (alts.some(a => a.length >= 4 && lev(a, v) <= (a.length >= 8 ? 2 : 1))) return 'close';
+  return 'no';
+}
+
+// ─── TYPING MODE ─────────────────────────────────────────────────────────────
+function submitTyped() {
+  if (!S || S.mode !== 'type') return;
+  const inp = $('s-input'), val = inp.value.trim();
+  const w = word(S.cur.wi);
+  if (S.phase === 'feedback') return nextQuestion();
+  if (!val) return;
+  if (S.phase === 'retype') {
+    if (grade(val, w, S.cur.dir) === 'ok') nextQuestion();
+    else { inp.value = ''; $('s-hint').textContent = 'Type the answer exactly as shown above to continue.'; }
+    return;
+  }
+  const g = grade(val, w, S.cur.dir);
+  if (g === 'ok') typedCorrect();
+  else typedWrong(g === 'close' ? 'Close — check your spelling.' : 'Not quite.', val);
+}
+
+function typedCorrect() {
+  record(true);
+  const w = word(S.cur.wi);
+  showFeedback(true, '✓ Correct! <b>' + esc(w.latin) + '</b> = ' + esc(w.english));
+  S.phase = 'feedback';
+  $('s-input').disabled = true;
+  $('s-type-btns').style.display = 'none';
+  $('s-next-btn').style.display = 'block';
+  $('s-next-btn').focus();
+  scheduleNext(1000);
+}
+
+function typedWrong(msg, given) {
+  S.undo = record(false);
+  const w = word(S.cur.wi), dir = S.cur.dir;
+  showFeedback(false,
+    '✗ ' + msg + (given ? ' You wrote “' + esc(given) + '”.' : '') +
+    '<br>The answer is: <b>' + esc(answerText(w, dir)) + '</b>' +
+    (given ? '<br><button class="link-btn" onclick="overrideCorrect()">I was right — count it as correct</button>' : ''));
+  const inp = $('s-input');
+  inp.value = '';
+  if (S.timed) {
+    S.phase = 'feedback';
+    inp.disabled = true;
+    $('s-type-btns').style.display = 'none';
+    $('s-next-btn').style.display = 'block';
+    $('s-next-btn').focus();
+  } else {
+    S.phase = 'retype';
+    inp.placeholder = 'Type the correct answer to continue…';
+    inp.focus();
+  }
+}
+
+function dontKnow() {
+  if (!S || S.phase !== 'answer') return;
+  typedWrong("Here's the answer to learn.", '');
+}
+
+function overrideCorrect() {
+  const u = S && S.undo;
+  if (!u) return;
+  const wi = S.cur.wi, w = word(wi);
+  w.s = u.s; w.n = u.n; w.c = u.c;
+  S.wrong--; S.streak = u.streak;
+  if (!u.wasMissed) S.missed.delete(wi);
+  const qi = S.queue.indexOf(wi);
+  if (qi >= 0) S.queue.splice(qi, 1);
+  S.undo = null;
+  typedCorrect();
+}
+
+function insertMacron(ch) {
+  const inp = $('s-input');
+  if (inp.disabled) return;
+  const a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? inp.value.length;
+  inp.value = inp.value.slice(0, a) + ch + inp.value.slice(b);
+  inp.focus();
+  inp.setSelectionRange(a + 1, a + 1);
+}
+$('s-macrons').querySelectorAll('button').forEach(b => {
+  b.addEventListener('mousedown', e => e.preventDefault());  // keep focus in the input
+  b.addEventListener('click', () => insertMacron(b.textContent));
+});
+
+// ─── MULTIPLE CHOICE MODE ────────────────────────────────────────────────────
+function renderMC() {
+  const words = chapters[currentIdx].words, w = word(S.cur.wi), dir = S.cur.dir;
+  const right = answerText(w, dir);
+  const others = shuffle([...new Set(words.map(x => answerText(x, dir)).filter(t => norm(t) !== norm(right)))]).slice(0, 3);
+  S.options = shuffle([right, ...others]);
+  S.rightOption = S.options.indexOf(right);
+  $('s-mc').innerHTML = S.options.map((o, i) =>
+    `<button class="mc-opt${dir === 'e2l' ? ' is-latin' : ''}" onclick="pickMC(${i})"><span class="key">${i + 1}</span>${esc(o)}</button>`).join('');
+  $('s-mc-next').style.display = 'none';
+}
+
+function pickMC(i) {
+  if (!S || S.phase !== 'answer' || i >= S.options.length) return;
+  S.phase = 'feedback';
+  const ok = i === S.rightOption;
+  record(ok);
+  const btns = $('s-mc').querySelectorAll('button');
+  btns.forEach(b => b.disabled = true);
+  btns[S.rightOption].classList.add('right');
+  if (!ok) btns[i].classList.add('picked-wrong');
+  const w = word(S.cur.wi);
+  showFeedback(ok, (ok ? '✓ Correct! ' : '✗ Not quite. ') + '<b>' + esc(w.latin) + '</b> = ' + esc(w.english));
+  $('s-mc-next').style.display = 'block';
+  if (ok) scheduleNext(900);
+}
+
+// ─── FLASHCARD MODE ──────────────────────────────────────────────────────────
+function revealFlash() {
+  if (!S || S.phase !== 'answer') return;
+  S.phase = 'revealed';
+  const w = word(S.cur.wi);
+  const fa = $('s-flash-answer');
+  fa.textContent = answerText(w, S.cur.dir);
+  fa.style.fontFamily = S.cur.dir === 'e2l' ? "'Lora',serif" : '';
+  fa.style.fontStyle = S.cur.dir === 'e2l' ? 'italic' : '';
+  fa.style.display = 'block';
+  $('s-flash-show').style.display = 'none';
+  $('s-flash-btns').style.display = 'grid';
+  $('s-hint').textContent = 'Keys: 1 = still learning, 2 = I knew it';
+}
+
+function flashAnswer(knew) {
+  if (!S || S.phase !== 'revealed') return;
+  S.phase = 'feedback';
+  record(knew);
+  nextQuestion();
+}
+
+// ─── RESULTS ─────────────────────────────────────────────────────────────────
+function finishSession() {
+  stopTimer();
+  const total = S.correct + S.wrong;
+  const secs = Math.round((Date.now() - S.start) / 1000);
+  $('r-title').textContent = S.timed ? 'time’s up!' : 'chapter complete!';
+  $('r-accuracy').textContent = (total ? Math.round(S.correct / total * 100) : 0) + '%';
+  $('r-points').textContent = S.points;
+  $('r-correct').textContent = S.correct;
+  $('r-best').textContent = S.best;
+  $('r-time').textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+  const missed = [...S.missed];
+  $('r-missed').innerHTML = missed.length
+    ? `<div class="card mt-12"><p class="section-label">Words to review (${missed.length})</p>${missed.map(wi => {
+        const w = word(wi);
+        return `<div class="word-row"><span class="word-latin">${esc(w.latin)}</span><span class="word-english">${esc(w.english)}</span></div>`;
+      }).join('')}</div>`
+    : (total ? '<div class="card mt-12" style="text-align:center">🎉 No mistakes — perfect!</div>' : '');
+  $('r-retry-missed').style.display = missed.length ? 'inline-block' : 'none';
+  S.finishedMissed = missed;
+  S.phase = 'done';
+  persist();
+  showScreen('screen-results');
+}
+
+function practiseMissed() {
+  if (S && S.finishedMissed && S.finishedMissed.length) startSession(S.finishedMissed);
 }
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -413,29 +1010,42 @@ function esc(s) {
 }
 
 // ─── KEYBOARD ────────────────────────────────────────────────────────────────
-document.getElementById('s-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
-document.getElementById('new-latin').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('new-english').focus(); });
-document.getElementById('new-english').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('new-type').focus(); });
-document.getElementById('new-type').addEventListener('keydown', e => { if (e.key === 'Enter') addWordToNew(); });
+$('s-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); submitTyped(); } });
+$('new-latin').addEventListener('keydown', e => { if (e.key === 'Enter') $('new-english').focus(); });
+$('new-english').addEventListener('keydown', e => { if (e.key === 'Enter') $('new-type').focus(); });
+$('new-type').addEventListener('keydown', e => { if (e.key === 'Enter') addWordToNew(); });
+document.addEventListener('keydown', e => {
+  if (!S || !$('screen-study').classList.contains('active') || e.target === $('s-input')) return;
+  if (S.mode === 'type' && S.phase === 'feedback' && e.key === 'Enter') { e.preventDefault(); nextQuestion(); }
+  if (S.mode === 'mc') {
+    if (S.phase === 'answer' && /^[1-4]$/.test(e.key)) pickMC(+e.key - 1);
+    else if (S.phase === 'feedback' && e.key === 'Enter') { e.preventDefault(); nextQuestion(); }
+  }
+  if (S.mode === 'flash') {
+    if (S.phase === 'answer' && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); revealFlash(); }
+    else if (S.phase === 'revealed' && e.key === '1') flashAnswer(false);
+    else if (S.phase === 'revealed' && e.key === '2') flashAnswer(true);
+  }
+});
 
 // ─── CLOUD SYNC HOOKS (used by the Firebase module below) ───────────────────
-window.getChapters = () => chapters;
-window.setChapters = data => {
-  chapters = Array.isArray(data) ? data : [];
-  localStorage.setItem(KEY, JSON.stringify(chapters));
-  showScreen('screen-home');
+window.getCloudPayload = () => ({ chapters, profile });
+window.setCloudData = data => {
+  chapters = Array.isArray(data.chapters) ? data.chapters : [];
+  if (data.profile) profile = { ...DEFAULT_PROFILE, ...data.profile };
+  saveLocal();
+  const active = document.querySelector('.screen.active').id;
+  if (active === 'screen-home' || active === 'screen-chapter') showScreen('screen-home');
 };
+window.onCloudReady = checkImport;
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 renderHome();
+setTimeout(checkImport, 5000);  // fallback if the cloud module never loads
 </script>
 
 <script type="module">
 // ─── FIREBASE ACCOUNTS & CLOUD SYNC ──────────────────────────────────────────
-// To activate: create a free project at https://console.firebase.google.com,
-// add a Web App, and paste its config below (replacing the PASTE_ME values).
-// Also enable Google under Authentication → Sign-in method, and create a
-// Firestore database. Until configured, the site saves locally as before.
 const firebaseConfig = {
   apiKey: "AIzaSyDByWUqI2h68j2Ln8KBnu5TX3vm8MrltJs",
   authDomain: "latin-vocab-1a193.firebaseapp.com",
@@ -445,7 +1055,7 @@ const firebaseConfig = {
   appId: "1:1081419208128:web:b7de72c2863c5d8c3c6425"
 };
 
-if (firebaseConfig.apiKey !== "PASTE_ME") {
+try {
   const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
   const { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } =
     await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
@@ -455,7 +1065,7 @@ if (firebaseConfig.apiKey !== "PASTE_ME") {
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getFirestore(app);
-  let uid = null;
+  let uid = null, pending = null, saveTimer = null, ready = false;
 
   document.getElementById('auth-area').style.display = 'block';
 
@@ -465,11 +1075,23 @@ if (firebaseConfig.apiKey !== "PASTE_ME") {
   };
   window.fbSignOut = () => signOut(auth);
 
-  window.cloudSave = async data => {
-    if (!uid) return;
-    try { await setDoc(doc(db, 'users', uid), { chapters: data }); }
+  // Saves are batched so practising doesn't write to the cloud after every answer.
+  async function flush() {
+    clearTimeout(saveTimer);
+    if (!uid || !pending) return;
+    const data = pending;
+    pending = null;
+    try { await setDoc(doc(db, 'users', uid), JSON.parse(JSON.stringify(data))); }
     catch (e) { console.error('Cloud save failed:', e); }
+  }
+  window.cloudSave = data => {
+    if (!uid) return;
+    pending = data;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(flush, 1500);
   };
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
 
   onAuthStateChanged(auth, async user => {
     uid = user ? user.uid : null;
@@ -478,17 +1100,23 @@ if (firebaseConfig.apiKey !== "PASTE_ME") {
     const label = document.getElementById('auth-user');
     label.style.display = user ? 'inline' : 'none';
     label.textContent = user ? '☁ syncing as ' + (user.displayName || user.email) : '';
-    if (!user) return;
-    try {
-      const snap  = await getDoc(doc(db, 'users', user.uid));
-      const cloud = snap.exists() ? snap.data().chapters : null;
-      if (cloud && cloud.length) {
-        window.setChapters(cloud);                    // account already has data: cloud copy wins
-      } else if (window.getChapters().length) {
-        await window.cloudSave(window.getChapters()); // first sign-in: upload local chapters
-      }
-    } catch (e) { console.error('Cloud load failed:', e); }
+    if (user) {
+      try {
+        const snap  = await getDoc(doc(db, 'users', user.uid));
+        const cloud = snap.exists() ? snap.data() : null;
+        if (cloud && cloud.chapters && cloud.chapters.length) {
+          window.setCloudData(cloud);                         // account already has data: cloud copy wins
+        } else if (window.getCloudPayload().chapters.length) {
+          pending = window.getCloudPayload();                 // first sign-in: upload local data
+          await flush();
+        }
+      } catch (e) { console.error('Cloud load failed:', e); }
+    }
+    if (!ready) { ready = true; window.onCloudReady(); }
   });
+} catch (e) {
+  console.error('Cloud sync unavailable:', e);
+  window.onCloudReady();
 }
 </script>
 </body>
