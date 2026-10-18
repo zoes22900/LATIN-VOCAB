@@ -153,6 +153,29 @@
 
     footer { text-align:center; font-size:12px; color:var(--on-bg-muted); margin-top:3rem; padding-bottom:2rem; }
 
+    /* ── tabs ── */
+    .tabs { display:flex; justify-content:center; gap:6px; margin:-0.75rem 0 1.75rem; }
+    .tabs button { padding:8px 22px; border-radius:99px; }
+    .tabs button.on { background:var(--accent); color:#fff; border-color:transparent; }
+
+    /* ── grammar ── */
+    .group-title { font-size:12px; text-transform:uppercase; letter-spacing:0.5px; color:var(--on-bg-muted); margin:1.5rem 0 8px; font-weight:500; }
+    .notes { font-size:14px; line-height:1.6; }
+    .notes p + p, .notes ul { margin-top:8px; }
+    .notes ul { padding-left:18px; }
+    .notes i { font-family:'Lora',serif; }
+    .tables { display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); }
+    .tables.wide { grid-template-columns:1fr; }
+    .ptable { width:100%; border-collapse:collapse; font-size:14px; }
+    .ptable th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); font-weight:500; padding:4px; }
+    .ptable td { padding:5px 4px; border-top:1px solid var(--border); vertical-align:top; }
+    .ptable td.form { font-family:'Lora',serif; font-style:italic; font-size:15px; }
+    .ptable td.lab { color:var(--muted); font-size:12px; white-space:nowrap; padding-top:12px; width:1%; }
+    .ptable input[type=text] { padding:7px 10px; font-family:'Lora',serif; font-size:15px; }
+    .ptable input.ok { border-color:var(--correct-border); background:var(--correct-bg); color:var(--correct-text); opacity:1; }
+    .ptable input.bad { border-color:var(--wrong-border); background:var(--wrong-bg); }
+    .fix { display:block; font-size:13px; color:var(--wrong-text); margin-top:3px; font-family:'Lora',serif; font-style:italic; }
+
     /* ── laptop / desktop ── */
     @media(min-width:900px){
       .page { max-width:920px; padding-top:2.5rem; }
@@ -161,7 +184,9 @@
       #chapter-list { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
       #chapter-list .card { margin-bottom:0; }
       #chapter-list .empty { grid-column:1/-1; }
-      #screen-chapter, #screen-edit { max-width:760px; margin-left:auto; margin-right:auto; }
+      .topic-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .topic-grid .card { margin-bottom:0; }
+      #screen-chapter, #screen-edit, #screen-gfill { max-width:760px; margin-left:auto; margin-right:auto; }
       #screen-setup, #screen-study, #screen-results { max-width:680px; margin-left:auto; margin-right:auto; }
       .flashcard { min-height:230px; padding:2.5rem 2rem; }
       .latin-big { font-size:46px; }
@@ -177,13 +202,18 @@
 
   <header>
     <h1>Education Not Perfect</h1>
-    <p>Free Latin vocabulary practice</p>
+    <p>Free Latin vocabulary and grammar practice</p>
     <div id="auth-area" style="display:none;margin-top:12px">
       <button id="btn-signin" class="btn-sm" style="display:none" onclick="fbSignIn()">Sign in with Google to sync</button>
       <span id="auth-user" style="display:none;font-size:12px;color:var(--on-bg-muted)"></span>
       <button id="btn-signout" class="btn-sm" style="display:none;margin-left:8px" onclick="fbSignOut()">sign out</button>
     </div>
   </header>
+
+  <nav class="tabs">
+    <button id="tab-vocab" class="on" onclick="goTab('vocab')">Vocabulary</button>
+    <button id="tab-grammar" onclick="goTab('grammar')">Grammar</button>
+  </nav>
 
   <!-- ═══ HOME ═══ -->
   <div id="screen-home" class="screen active">
@@ -376,6 +406,89 @@
     </div>
   </div>
 
+  <!-- ═══ GRAMMAR: TOPIC LIST ═══ -->
+  <div id="screen-grammar" class="screen">
+    <h2>Grammar</h2>
+    <p class="sub" style="margin:0">Learn the endings, then drill them until they stick</p>
+    <div id="grammar-list"></div>
+  </div>
+
+  <!-- ═══ GRAMMAR: TOPIC ═══ -->
+  <div id="screen-gtopic" class="screen">
+    <button class="btn-back btn-sm" onclick="showScreen('screen-grammar')">← back</button>
+    <h2 id="gt-title"></h2>
+    <p class="sub" id="gt-example"></p>
+    <div class="card notes" id="gt-notes"></div>
+    <div class="card" id="gt-tense-wrap">
+      <label>Tenses to study and practise</label>
+      <div class="seg" id="gt-tenses" style="margin-bottom:0"></div>
+    </div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="btn-primary" onclick="startFill()">✎ Fill the table</button>
+      <button onclick="startGDrill('id')">Identify forms</button>
+      <button onclick="startGDrill('make')">Make forms</button>
+    </div>
+    <div id="gt-tables"></div>
+  </div>
+
+  <!-- ═══ GRAMMAR: FILL THE TABLE ═══ -->
+  <div id="screen-gfill" class="screen">
+    <button class="btn-back btn-sm" onclick="openTopic(gTopic.id)">← back</button>
+    <h2 id="gf-title"></h2>
+    <p class="sub">Type every form, then check. Macrons are optional. Enter moves to the next box.</p>
+    <div class="macrons">
+      <button type="button" tabindex="-1">ā</button><button type="button" tabindex="-1">ē</button><button type="button" tabindex="-1">ī</button><button type="button" tabindex="-1">ō</button><button type="button" tabindex="-1">ū</button>
+    </div>
+    <div id="gf-tables"></div>
+    <div class="feedback" id="gf-feedback"></div>
+    <div class="row mt-12" style="gap:8px;flex-wrap:wrap">
+      <button class="btn-primary" id="gf-check" onclick="checkFill()">check</button>
+      <button id="gf-retry" style="display:none" onclick="retryFill()">try the wrong ones again</button>
+      <button id="gf-new" style="display:none" onclick="startFill()">start over</button>
+    </div>
+  </div>
+
+  <!-- ═══ GRAMMAR: DRILL ═══ -->
+  <div id="screen-gdrill" class="screen">
+    <button class="btn-back btn-sm" onclick="openTopic(gTopic.id)">← quit</button>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num" id="gd-points">0</span><span class="stat-label">points</span></div>
+      <div class="stat"><span class="stat-num" id="gd-correct">0</span><span class="stat-label">correct</span></div>
+      <div class="stat"><span class="stat-num" id="gd-togo">0</span><span class="stat-label">to go</span></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="gd-progress" style="width:0%"></div></div>
+    <div id="gd-main">
+      <div class="flashcard">
+        <p class="dir-tag" id="gd-dir"></p>
+        <p class="latin-big is-latin" id="gd-prompt"></p>
+        <p class="type-tag" id="gd-sub"></p>
+      </div>
+      <div id="gd-id-area">
+        <label id="gd-a-label"></label>
+        <div class="seg" id="gd-a"></div>
+        <label id="gd-b-label"></label>
+        <div class="seg" id="gd-b"></div>
+      </div>
+      <div id="gd-make-area">
+        <div class="macrons">
+          <button type="button" tabindex="-1">ā</button><button type="button" tabindex="-1">ē</button><button type="button" tabindex="-1">ī</button><button type="button" tabindex="-1">ō</button><button type="button" tabindex="-1">ū</button>
+        </div>
+        <input type="text" id="gd-input" placeholder="Type the Latin form…" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-bottom:10px" />
+      </div>
+      <button class="btn-primary full" id="gd-btn" onclick="gdSubmit()">check →</button>
+      <div class="feedback" id="gd-feedback"></div>
+    </div>
+    <div id="gd-done" class="card" style="display:none;text-align:center;padding:1.5rem">
+      <p class="dir-tag">drill complete!</p>
+      <p class="big-score" id="gd-accuracy">0%</p>
+      <p class="sub" style="margin-bottom:1rem" id="gd-summary"></p>
+      <div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="startGDrill(G.kind)">go again</button>
+        <button onclick="openTopic(gTopic.id)">back to topic</button>
+      </div>
+    </div>
+  </div>
+
   <footer>Education Not Perfect &mdash; a free, open-source passion project for Latin students</footer>
 
 </div><!-- /page -->
@@ -383,7 +496,7 @@
 <script>
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
 const KEY = 'latin-chapters', PKEY = 'latin-profile', SKEY = 'latin-settings';
-const DEFAULT_PROFILE = { points: 0, daily: {}, streak: 0, lastDay: null, goal: 100 };
+const newProfile = () => ({ points: 0, daily: {}, streak: 0, lastDay: null, goal: 100, grammar: {} });
 function loadJSON(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } }
 function saveLocal() {
   try {
@@ -398,7 +511,7 @@ function persist() {
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let chapters = loadJSON(KEY, []);
-let profile  = { ...DEFAULT_PROFILE, ...loadJSON(PKEY, {}) };
+let profile  = { ...newProfile(), ...loadJSON(PKEY, {}) };
 let settings = { mode: 'type', dir: 'l2e', words: 'all', timed: '0', ...loadJSON(SKEY, {}) };
 let currentIdx = null, editIdx = null;
 let newWords = [];
@@ -412,8 +525,21 @@ const $ = id => document.getElementById(id);
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
+  const grammar = id.startsWith('screen-g');
+  $('tab-grammar').classList.toggle('on', grammar);
+  $('tab-vocab').classList.toggle('on', !grammar);
   if (id === 'screen-home') renderHome();
+  if (id === 'screen-grammar') renderGrammarList();
   window.scrollTo(0, 0);
+}
+
+function goTab(tab) {
+  if (S && S.phase !== 'done' && (S.correct || S.wrong) && $('screen-study').classList.contains('active')
+      && !confirm('Quit this session? Your points so far are kept.')) return;
+  stopTimer();
+  S = null;
+  if (G) clearTimeout(G.auto);
+  showScreen(tab === 'grammar' ? 'screen-grammar' : 'screen-home');
 }
 
 // ─── PROFILE: POINTS, DAILY GOAL, DAY STREAK ─────────────────────────────────
@@ -906,15 +1032,18 @@ function overrideCorrect() {
   typedCorrect();
 }
 
+// Macron buttons type into whichever text box was used last.
+let lastInput = null;
+document.addEventListener('focusin', e => { if (e.target.matches('input[type=text]')) lastInput = e.target; });
 function insertMacron(ch) {
-  const inp = $('s-input');
-  if (inp.disabled) return;
+  const inp = lastInput;
+  if (!inp || inp.disabled) return;
   const a = inp.selectionStart ?? inp.value.length, b = inp.selectionEnd ?? inp.value.length;
   inp.value = inp.value.slice(0, a) + ch + inp.value.slice(b);
   inp.focus();
   inp.setSelectionRange(a + 1, a + 1);
 }
-$('s-macrons').querySelectorAll('button').forEach(b => {
+document.querySelectorAll('.macrons button').forEach(b => {
   b.addEventListener('mousedown', e => e.preventDefault());  // keep focus in the input
   b.addEventListener('click', () => insertMacron(b.textContent));
 });
@@ -1028,11 +1157,440 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// ─── GRAMMAR: DATA ───────────────────────────────────────────────────────────
+const CASES   = ['Nominative', 'Genitive', 'Dative', 'Accusative', 'Ablative'];
+const NUMBERS = ['Singular', 'Plural'];
+const PERSONS = ['1st sg (I)', '2nd sg (you)', '3rd sg (he/she/it)', '1st pl (we)', '2nd pl (you all)', '3rd pl (they)'];
+const TENSES  = ['Present', 'Imperfect', 'Future', 'Perfect', 'Pluperfect', 'Future perfect'];
+
+function noun(id, title, lemma, example, sg, pl, notes) {
+  return { id, group: 'Nouns', title, lemma, example, notes,
+    blocks: [{ title: '', rows: CASES, cols: NUMBERS, cells: CASES.map((_, r) => [sg[r], pl[r]]) }] };
+}
+function verb(id, title, lemma, example, forms, notes) {
+  return { id, group: 'Verbs', title, lemma, example, notes,
+    blocks: TENSES.map(t => ({ title: t, rows: PERSONS, cols: [''], cells: forms[t].map(f => [f]) })) };
+}
+const withEnds = (stem, ends) => ends.map(e => stem + e);
+function perfectTenses(perfStem) {
+  return {
+    'Perfect':        withEnds(perfStem, ['ī', 'istī', 'it', 'imus', 'istis', 'ērunt']),
+    'Pluperfect':     withEnds(perfStem, ['eram', 'erās', 'erat', 'erāmus', 'erātis', 'erant']),
+    'Future perfect': withEnds(perfStem, ['erō', 'eris', 'erit', 'erimus', 'eritis', 'erint']),
+  };
+}
+// Active indicative of a regular verb. c is 1, 2, 3, '3io' or 4.
+function regularVerb(c, stem, perfStem) {
+  const present = {
+    1:     ['ō', 'ās', 'at', 'āmus', 'ātis', 'ant'],
+    2:     ['eō', 'ēs', 'et', 'ēmus', 'ētis', 'ent'],
+    3:     ['ō', 'is', 'it', 'imus', 'itis', 'unt'],
+    '3io': ['iō', 'is', 'it', 'imus', 'itis', 'iunt'],
+    4:     ['iō', 'īs', 'it', 'īmus', 'ītis', 'iunt'],
+  }[c];
+  const vowel = { 1: 'ā', 2: 'ē', 3: 'ē', '3io': 'iē', 4: 'iē' }[c];
+  const future = c === 1 || c === 2
+    ? withEnds(stem + vowel, ['bō', 'bis', 'bit', 'bimus', 'bitis', 'bunt'])
+    : withEnds(stem + (c === 3 ? '' : 'i'), ['am', 'ēs', 'et', 'ēmus', 'ētis', 'ent']);
+  return {
+    'Present':   withEnds(stem, present),
+    'Imperfect': withEnds(stem + vowel, ['bam', 'bās', 'bat', 'bāmus', 'bātis', 'bant']),
+    'Future':    future,
+    ...perfectTenses(perfStem),
+  };
+}
+
+const GRAMMAR = [
+  noun('n1', '1st declension', 'puella', 'puella, puellae (f.) — girl',
+    ['puella', 'puellae', 'puellae', 'puellam', 'puellā'],
+    ['puellae', 'puellārum', 'puellīs', 'puellās', 'puellīs'],
+    `<p>Most 1st declension nouns end in <i>-a</i> and are feminine. A few that describe men are masculine: <i>agricola</i> (farmer), <i>nauta</i> (sailor), <i>poēta</i> (poet).</p>
+     <ul><li><i>-ae</i> can be genitive singular, dative singular <b>or</b> nominative plural — use the rest of the sentence to decide.</li>
+     <li><i>-īs</i> is both dative and ablative plural.</li>
+     <li>The ablative singular has a long <i>-ā</i>.</li></ul>`),
+  noun('n2', '2nd declension (-us)', 'servus', 'servus, servī (m.) — slave',
+    ['servus', 'servī', 'servō', 'servum', 'servō'],
+    ['servī', 'servōrum', 'servīs', 'servōs', 'servīs'],
+    `<p>Mostly masculine nouns ending in <i>-us</i>.</p>
+     <ul><li><i>-ī</i> is genitive singular <b>or</b> nominative plural.</li>
+     <li><i>-ō</i> is both dative and ablative singular; <i>-īs</i> is both dative and ablative plural.</li>
+     <li>The vocative (calling someone) ends in <i>-e</i>: <i>serve!</i> — names in <i>-ius</i> use <i>-ī</i>: <i>Mārcī!</i></li></ul>`),
+  noun('n2er', '2nd declension (-er)', 'puer', 'puer, puerī (m.) — boy',
+    ['puer', 'puerī', 'puerō', 'puerum', 'puerō'],
+    ['puerī', 'puerōrum', 'puerīs', 'puerōs', 'puerīs'],
+    `<p>Same endings as <i>servus</i>, but the nominative singular is just the stem ending in <i>-er</i>.</p>
+     <ul><li>Some nouns keep the <i>e</i> (<i>puer, puerī</i>); others drop it (<i>ager, agrī</i> — field; <i>magister, magistrī</i> — teacher).</li>
+     <li>The genitive tells you which: always learn the noun as <i>puer, puerī</i>.</li></ul>`),
+  noun('n2n', '2nd declension (neuter)', 'bellum', 'bellum, bellī (n.) — war',
+    ['bellum', 'bellī', 'bellō', 'bellum', 'bellō'],
+    ['bella', 'bellōrum', 'bellīs', 'bella', 'bellīs'],
+    `<p><b>The neuter rule</b> (true for every neuter noun): the nominative and accusative are always the same, and in the plural they end in <i>-a</i>.</p>
+     <ul><li>Apart from that, the endings match <i>servus</i>.</li>
+     <li>Don't mistake <i>bella</i> (nominative/accusative plural) for a 1st declension singular.</li></ul>`),
+  noun('n3', '3rd declension', 'rēx', 'rēx, rēgis (m.) — king',
+    ['rēx', 'rēgis', 'rēgī', 'rēgem', 'rēge'],
+    ['rēgēs', 'rēgum', 'rēgibus', 'rēgēs', 'rēgibus'],
+    `<p>The biggest group. The nominative singular varies, so <b>learn the genitive</b> to find the stem: <i>rēx, rēgis</i> → stem <i>rēg-</i>.</p>
+     <ul><li>Masculine and feminine nouns share these endings.</li>
+     <li><i>-ēs</i> is both nominative and accusative plural.</li>
+     <li><i>-ibus</i> is both dative and ablative plural.</li></ul>`),
+  noun('n3i', '3rd declension (i-stem)', 'cīvis', 'cīvis, cīvis (m./f.) — citizen',
+    ['cīvis', 'cīvis', 'cīvī', 'cīvem', 'cīve'],
+    ['cīvēs', 'cīvium', 'cīvibus', 'cīvēs', 'cīvibus'],
+    `<p>Like <i>rēx</i>, except the genitive plural is <i>-ium</i> instead of <i>-um</i>.</p>
+     <ul><li>i-stems include nouns with the same number of syllables in nominative and genitive (<i>cīvis, cīvis; nāvis, nāvis</i>) and many one-syllable nouns whose stem ends in two consonants (<i>urbs, urbis → urbium</i>).</li>
+     <li><i>-is</i> can be nominative <b>or</b> genitive singular here.</li></ul>`),
+  noun('n3n', '3rd declension (neuter)', 'nōmen', 'nōmen, nōminis (n.) — name',
+    ['nōmen', 'nōminis', 'nōminī', 'nōmen', 'nōmine'],
+    ['nōmina', 'nōminum', 'nōminibus', 'nōmina', 'nōminibus'],
+    `<p>3rd declension endings plus <b>the neuter rule</b>: nominative = accusative, and the plural ends in <i>-a</i>.</p>
+     <ul><li>Common types: <i>-men</i> (<i>nōmen</i>), <i>-us, -oris</i> (<i>corpus, corporis</i> — body; <i>tempus, temporis</i> — time).</li>
+     <li>Careful: <i>corpus</i> looks 2nd declension but is not.</li></ul>`),
+  noun('n4', '4th declension', 'manus', 'manus, manūs (f.) — hand',
+    ['manus', 'manūs', 'manuī', 'manum', 'manū'],
+    ['manūs', 'manuum', 'manibus', 'manūs', 'manibus'],
+    `<p>Mostly masculine nouns in <i>-us</i> — the genitive <i>-ūs</i> tells them apart from <i>servus</i>. <i>manus</i> and <i>domus</i> (house) are feminine.</p>
+     <ul><li>Look for the <i>u</i> in almost every ending.</li>
+     <li><i>-ūs</i> is genitive singular, nominative plural <b>and</b> accusative plural.</li></ul>`),
+  noun('n5', '5th declension', 'rēs', 'rēs, reī (f.) — thing, matter',
+    ['rēs', 'reī', 'reī', 'rem', 'rē'],
+    ['rēs', 'rērum', 'rēbus', 'rēs', 'rēbus'],
+    `<p>A small group of nouns in <i>-ēs</i>, mostly feminine — but very common: <i>rēs</i> (thing), <i>diēs</i> (day, usually masculine), <i>spēs</i> (hope), <i>fidēs</i> (faith).</p>
+     <ul><li>Look for the <i>e</i> in every ending.</li>
+     <li><i>rēs</i> can be nominative singular or nominative/accusative plural.</li></ul>`),
+
+  verb('v1', '1st conjugation', 'portō', 'portō, portāre, portāvī, portātum — carry',
+    regularVerb(1, 'port', 'portāv'),
+    `<p>Infinitive in <i>-āre</i>. The vowel <i>ā</i> appears in most forms — except <i>portō</i> and <i>portat/portant</i>.</p>
+     <ul><li>Personal endings: <i>-ō/-m, -s, -t, -mus, -tis, -nt</i> (I, you, he/she/it, we, you all, they).</li>
+     <li>Imperfect = stem + <i>-bam</i> ("was carrying"); future = stem + <i>-bō</i> ("will carry").</li>
+     <li>Perfect stem usually <i>-āv-</i>: <i>portāvī</i> ("I carried").</li></ul>`),
+  verb('v2', '2nd conjugation', 'moneō', 'moneō, monēre, monuī, monitum — warn',
+    regularVerb(2, 'mon', 'monu'),
+    `<p>Infinitive in <i>-ēre</i> (long <i>ē</i>). The vowel <i>ē</i> is kept everywhere — even in <i>moneō</i>.</p>
+     <ul><li>Imperfect <i>monēbam</i>, future <i>monēbō</i> — like the 1st conjugation with <i>ē</i> instead of <i>ā</i>.</li>
+     <li>Perfect stems vary; many end in <i>-u-</i>: <i>monuī, habuī, timuī</i>.</li></ul>`),
+  verb('v3', '3rd conjugation', 'regō', 'regō, regere, rēxī, rēctum — rule',
+    regularVerb(3, 'reg', 'rēx'),
+    `<p>Infinitive in <i>-ere</i> (short <i>e</i>). The vowel shifts: <i>regis, regit, regimus, regitis, regunt</i>.</p>
+     <ul><li>The future uses <i>-am, -ēs, -et…</i>, not <i>-bō</i>. Careful: <i>reget</i> is future, but <i>monet</i> is present!</li>
+     <li>Perfect stems are unpredictable — learn the 3rd principal part (<i>regō → rēxī</i>, <i>dūcō → dūxī</i>, <i>mittō → mīsī</i>).</li></ul>`),
+  verb('v3io', '3rd conjugation (-iō)', 'capiō', 'capiō, capere, cēpī, captum — take',
+    regularVerb('3io', 'cap', 'cēp'),
+    `<p>A mixed group: infinitive <i>-ere</i> like <i>regō</i>, but an <i>i</i> appears in the 1st person singular, 3rd person plural, imperfect and future.</p>
+     <ul><li><i>capiō, capiunt, capiēbam, capiam</i> — but <i>capis, capit, capimus, capitis</i>.</li>
+     <li>Other examples: <i>faciō</i> (make), <i>iaciō</i> (throw), <i>fugiō</i> (flee).</li></ul>`),
+  verb('v4', '4th conjugation', 'audiō', 'audiō, audīre, audīvī, audītum — hear',
+    regularVerb(4, 'aud', 'audīv'),
+    `<p>Infinitive in <i>-īre</i>. Like <i>capiō</i>, but with a long <i>ī</i>: <i>audīs, audīmus, audītis</i>.</p>
+     <ul><li>Imperfect <i>audiēbam</i>; future <i>audiam, audiēs, audiet…</i></li>
+     <li>Perfect stem usually <i>-īv-</i>: <i>audīvī</i>.</li></ul>`),
+  verb('vsum', 'sum (be)', 'sum', 'sum, esse, fuī — be',
+    { 'Present':   ['sum', 'es', 'est', 'sumus', 'estis', 'sunt'],
+      'Imperfect': ['eram', 'erās', 'erat', 'erāmus', 'erātis', 'erant'],
+      'Future':    ['erō', 'eris', 'erit', 'erimus', 'eritis', 'erunt'],
+      ...perfectTenses('fu') },
+    `<p>Irregular — learn it by heart. It is the most common verb in Latin.</p>
+     <ul><li>The imperfect <i>eram</i> and future <i>erō</i> of <i>sum</i> give the endings for the pluperfect and future perfect of <b>every</b> verb: <i>portāv-eram, portāv-erō</i>.</li>
+     <li>Note the future perfect 3rd plural is <i>fuerint</i>, but the future is <i>erunt</i>.</li></ul>`),
+  verb('vpossum', 'possum (be able)', 'possum', 'possum, posse, potuī — be able, can',
+    { 'Present':   ['possum', 'potes', 'potest', 'possumus', 'potestis', 'possunt'],
+      'Imperfect': ['poteram', 'poterās', 'poterat', 'poterāmus', 'poterātis', 'poterant'],
+      'Future':    ['poterō', 'poteris', 'poterit', 'poterimus', 'poteritis', 'poterunt'],
+      ...perfectTenses('potu') },
+    `<p><i>pot-</i> + <i>sum</i>: it becomes <i>pos-</i> before an <i>s</i> (<i>possum, possunt</i>) and stays <i>pot-</i> before a vowel (<i>potes, poteram</i>).</p>
+     <ul><li>Usually followed by an infinitive: <i>currere possum</i> — I can run.</li>
+     <li>Perfect stem <i>potu-</i>: <i>potuī</i> ("I was able").</li></ul>`),
+];
+
+// ─── GRAMMAR: TOPICS ─────────────────────────────────────────────────────────
+let gTopic = null, gTenses = ['Present'], G = null;
+const formNorm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+const blockKey = blk => blk.title || 'table';
+
+function topicMastery(t) {
+  const rec = (profile.grammar || {})[t.id] || {};
+  return Math.round(t.blocks.reduce((a, b) => a + (rec[blockKey(b)] || 0), 0) / t.blocks.length);
+}
+
+function renderGrammarList() {
+  $('grammar-list').innerHTML = ['Nouns', 'Verbs'].map(group => `
+    <p class="group-title">${group}</p>
+    <div class="topic-grid">${GRAMMAR.filter(t => t.group === group).map(t => {
+      const m = topicMastery(t);
+      return `
+      <div class="card chapter-card" onclick="openTopic('${t.id}')">
+        <div class="row-between">
+          <div>
+            <p class="chapter-title">${t.title}</p>
+            <p class="chapter-meta"><i style="font-family:'Lora',serif">${t.example}</i></p>
+          </div>
+          <span class="chevron">›</span>
+        </div>
+        <div class="mastery-wrap"><div class="mastery-bar" style="width:${m}%"></div></div>
+      </div>`;
+    }).join('')}</div>`).join('');
+}
+
+function selectedBlocks() {
+  return gTopic.group === 'Verbs' ? gTopic.blocks.filter(b => gTenses.includes(b.title)) : gTopic.blocks;
+}
+
+function openTopic(id) {
+  if (G) clearTimeout(G.auto);
+  gTopic = GRAMMAR.find(t => t.id === id);
+  $('gt-title').textContent = gTopic.title;
+  $('gt-example').textContent = gTopic.example + ' · ' + topicMastery(gTopic) + '% mastered';
+  $('gt-notes').innerHTML = gTopic.notes;
+  $('gt-tense-wrap').style.display = gTopic.group === 'Verbs' ? 'block' : 'none';
+  renderTopicTables();
+  showScreen('screen-gtopic');
+}
+
+function renderTopicTables() {
+  if (gTopic.group === 'Verbs') {
+    $('gt-tenses').innerHTML = TENSES.map(t => `<button data-v="${t}" class="${gTenses.includes(t) ? 'on' : ''}">${t}</button>`).join('');
+  }
+  $('gt-tables').innerHTML = tablesHTML(selectedBlocks(), false);
+}
+
+$('gt-tenses').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  const t = b.dataset.v;
+  if (gTenses.includes(t)) { if (gTenses.length > 1) gTenses = gTenses.filter(x => x !== t); }
+  else gTenses = TENSES.filter(x => x === t || gTenses.includes(x));
+  renderTopicTables();
+});
+
+function tablesHTML(blocks, fill) {
+  return `<div class="tables${gTopic.group === 'Nouns' ? ' wide' : ''}">${blocks.map((blk, bi) => {
+    const head = blk.cols.length > 1 ? `<tr><th></th>${blk.cols.map(c => `<th>${c}</th>`).join('')}</tr>` : '';
+    const rows = blk.rows.map((row, r) => `<tr><td class="lab">${row}</td>${blk.cols.map((_, c) => fill
+      ? `<td><input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-b="${bi}" data-r="${r}" data-c="${c}" /></td>`
+      : `<td class="form">${blk.cells[r][c]}</td>`).join('')}</tr>`).join('');
+    return `<div class="card" style="margin:0">${blk.title ? `<p class="section-label">${blk.title}</p>` : ''}<table class="ptable">${head}${rows}</table></div>`;
+  }).join('')}</div>`;
+}
+
+// ─── GRAMMAR: FILL THE TABLE ─────────────────────────────────────────────────
+let fillBlocks = [], fillFirstCheck = true;
+const fillInputs = () => [...$('gf-tables').querySelectorAll('input')];
+
+function startFill() {
+  fillBlocks = selectedBlocks();
+  fillFirstCheck = true;
+  $('gf-title').textContent = gTopic.title + ' — ' + gTopic.lemma;
+  $('gf-tables').innerHTML = tablesHTML(fillBlocks, true);
+  $('gf-feedback').style.display = 'none';
+  $('gf-check').style.display = 'inline-block';
+  $('gf-retry').style.display = 'none';
+  $('gf-new').style.display = 'none';
+  showScreen('screen-gfill');
+  fillInputs()[0].focus();
+}
+
+function checkFill() {
+  const inputs = fillInputs();
+  const perBlock = fillBlocks.map(() => ({ ok: 0, n: 0 }));
+  let right = 0;
+  inputs.forEach(inp => {
+    const b = +inp.dataset.b, want = fillBlocks[b].cells[+inp.dataset.r][+inp.dataset.c];
+    const ok = formNorm(inp.value) === formNorm(want);
+    perBlock[b].n++;
+    if (ok) { perBlock[b].ok++; right++; }
+    inp.classList.toggle('ok', ok);
+    inp.classList.toggle('bad', !ok);
+    inp.disabled = ok;
+    let fix = inp.parentElement.querySelector('.fix');
+    if (ok) { if (fix) fix.remove(); return; }
+    if (!fix) { fix = document.createElement('span'); fix.className = 'fix'; inp.parentElement.appendChild(fix); }
+    fix.textContent = want;
+  });
+  let msg = right + ' / ' + inputs.length + ' correct.';
+  if (fillFirstCheck) {
+    // Only the first attempt counts towards points and mastery.
+    fillFirstCheck = false;
+    const rec = profile.grammar[gTopic.id] = profile.grammar[gTopic.id] || {};
+    fillBlocks.forEach((blk, i) => {
+      rec[blockKey(blk)] = Math.max(rec[blockKey(blk)] || 0, Math.round(perBlock[i].ok / perBlock[i].n * 100));
+    });
+    const pts = right * 2;
+    if (pts) addPoints(pts);
+    persist();
+    msg += ' +' + pts + ' points.';
+  }
+  const all = right === inputs.length;
+  const fb = $('gf-feedback');
+  fb.className = 'feedback ' + (all ? 'fb-ok' : 'fb-no');
+  fb.innerHTML = all ? '✓ ' + msg + ' Perfect!' : '✗ ' + msg + ' The correct forms are shown in red — study them, then try again.';
+  fb.style.display = 'block';
+  $('gf-check').style.display = 'none';
+  $('gf-retry').style.display = all ? 'none' : 'inline-block';
+  $('gf-new').style.display = 'inline-block';
+}
+
+function retryFill() {
+  fillInputs().filter(i => !i.disabled).forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('bad');
+    const fix = inp.parentElement.querySelector('.fix');
+    if (fix) fix.remove();
+  });
+  $('gf-feedback').style.display = 'none';
+  $('gf-check').style.display = 'inline-block';
+  $('gf-retry').style.display = 'none';
+  const first = fillInputs().find(i => !i.disabled);
+  if (first) first.focus();
+}
+
+$('gf-tables').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
+  e.preventDefault();
+  const open = fillInputs().filter(i => !i.disabled);
+  const k = open.indexOf(e.target);
+  if (k >= 0 && k < open.length - 1) open[k + 1].focus();
+  else if ($('gf-check').style.display !== 'none') checkFill();
+});
+
+// ─── GRAMMAR: IDENTIFY / MAKE DRILLS ─────────────────────────────────────────
+const DRILL_SIZE = 12;
+
+function drillCells() {
+  const out = [];
+  selectedBlocks().forEach(blk => blk.rows.forEach((a, r) => blk.cols.forEach((col, c) =>
+    out.push({ a, b: blk.title || col, form: blk.cells[r][c] }))));
+  return out;
+}
+
+function startGDrill(kind) {
+  const cells = drillCells();
+  G = { kind, cells, queue: shuffle([...cells]).slice(0, DRILL_SIZE),
+        done: 0, correct: 0, wrong: 0, points: 0, cur: null, phase: 'answer', pickA: null, pickB: null, auto: null };
+  G.total = G.queue.length;
+  const verbs = gTopic.group === 'Verbs';
+  G.aOpts = gTopic.blocks[0].rows;
+  G.bOpts = verbs ? TENSES.filter(t => gTenses.includes(t)) : NUMBERS;
+  $('gd-a-label').textContent = verbs ? 'Person' : 'Case';
+  $('gd-b-label').textContent = verbs ? 'Tense' : 'Number';
+  $('gd-id-area').style.display = kind === 'id' ? 'block' : 'none';
+  $('gd-make-area').style.display = kind === 'make' ? 'block' : 'none';
+  $('gd-main').style.display = 'block';
+  $('gd-done').style.display = 'none';
+  showScreen('screen-gdrill');
+  gdNext();
+}
+
+function gdNext() {
+  clearTimeout(G.auto);
+  if (!G.queue.length) return gdFinish();
+  G.cur = G.queue.shift();
+  G.phase = 'answer';
+  G.pickA = null;
+  G.pickB = G.bOpts.length === 1 ? G.bOpts[0] : null;
+  $('gd-feedback').style.display = 'none';
+  $('gd-btn').textContent = 'check →';
+  if (G.kind === 'id') {
+    $('gd-dir').textContent = 'what form is this?';
+    $('gd-prompt').textContent = G.cur.form;
+    $('gd-sub').textContent = 'from ' + gTopic.example;
+    renderPicks();
+  } else {
+    $('gd-dir').textContent = 'give this form of';
+    $('gd-prompt').textContent = gTopic.lemma;
+    $('gd-sub').textContent = G.cur.a + ' · ' + G.cur.b;
+    const inp = $('gd-input');
+    inp.value = '';
+    inp.disabled = false;
+    inp.focus();
+  }
+  gdStats();
+}
+
+function renderPicks() {
+  const btns = (opts, pick) => opts.map(o => `<button data-v="${o}" class="${pick === o ? 'on' : ''}">${o}</button>`).join('');
+  $('gd-a').innerHTML = btns(G.aOpts, G.pickA);
+  $('gd-b').innerHTML = btns(G.bOpts, G.pickB);
+}
+['gd-a', 'gd-b'].forEach(id => $(id).addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b || !G || G.phase !== 'answer') return;
+  if (id === 'gd-a') G.pickA = b.dataset.v; else G.pickB = b.dataset.v;
+  renderPicks();
+}));
+
+function gdStats() {
+  $('gd-points').textContent = G.points;
+  $('gd-correct').textContent = G.correct;
+  $('gd-togo').textContent = G.total - G.done;
+  $('gd-progress').style.width = Math.round(G.done / G.total * 100) + '%';
+}
+
+function gdSubmit() {
+  if (!G) return;
+  if (G.phase === 'feedback') return gdNext();
+  let ok, detail;
+  if (G.kind === 'id') {
+    if (!G.pickA || !G.pickB) {
+      $('gd-feedback').className = 'feedback fb-no';
+      $('gd-feedback').textContent = 'Choose a ' + $('gd-a-label').textContent.toLowerCase() + ' and a ' + $('gd-b-label').textContent.toLowerCase() + ' first.';
+      $('gd-feedback').style.display = 'block';
+      return;
+    }
+    // Many forms are ambiguous (e.g. -īs = dative or ablative plural), so accept any matching cell.
+    const matches = G.cells.filter(c => c.form === G.cur.form);
+    ok = matches.some(c => c.a === G.pickA && c.b === G.pickB);
+    detail = '<b><i>' + esc(G.cur.form) + '</i></b> = ' + matches.map(c => esc(c.a + ' · ' + c.b)).join(' <i>or</i> ');
+  } else {
+    const val = $('gd-input').value;
+    if (!val.trim()) return;
+    ok = formNorm(val) === formNorm(G.cur.form);
+    $('gd-input').disabled = true;
+    detail = (ok ? '' : 'The answer is ') + '<b><i>' + esc(G.cur.form) + '</i></b> (' + esc(G.cur.a + ' · ' + G.cur.b) + ')';
+  }
+  G.phase = 'feedback';
+  if (ok) {
+    G.correct++; G.done++;
+    const p = G.kind === 'id' ? 5 : 10;
+    G.points += p;
+    addPoints(p);
+    persist();
+    G.auto = setTimeout(gdNext, 1200);
+  } else {
+    G.wrong++;
+    G.queue.splice(Math.min(3, G.queue.length), 0, G.cur);  // ask it again soon
+  }
+  const fb = $('gd-feedback');
+  fb.className = 'feedback ' + (ok ? 'fb-ok' : 'fb-no');
+  fb.innerHTML = (ok ? '✓ Correct! ' : '✗ Not quite. ') + detail;
+  fb.style.display = 'block';
+  $('gd-btn').textContent = 'next →';
+  if (G.kind === 'id') $('gd-btn').focus();
+  gdStats();
+}
+
+function gdFinish() {
+  G.phase = 'done';
+  const total = G.correct + G.wrong;
+  $('gd-accuracy').textContent = (total ? Math.round(G.correct / total * 100) : 0) + '%';
+  $('gd-summary').textContent = 'accuracy · ' + G.correct + ' correct, ' + G.wrong + ' wrong · +' + G.points + ' points';
+  $('gd-main').style.display = 'none';
+  $('gd-done').style.display = 'block';
+}
+
+$('gd-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); gdSubmit(); } });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !G || G.phase === 'done' || !$('screen-gdrill').classList.contains('active')) return;
+  if (e.target === $('gd-input')) return;
+  e.preventDefault();
+  gdSubmit();
+});
+
 // ─── CLOUD SYNC HOOKS (used by the Firebase module below) ───────────────────
 window.getCloudPayload = () => ({ chapters, profile });
 window.setCloudData = data => {
   chapters = Array.isArray(data.chapters) ? data.chapters : [];
-  if (data.profile) profile = { ...DEFAULT_PROFILE, ...data.profile };
+  if (data.profile) profile = { ...newProfile(), ...data.profile };
   saveLocal();
   const active = document.querySelector('.screen.active').id;
   if (active === 'screen-home' || active === 'screen-chapter') showScreen('screen-home');
